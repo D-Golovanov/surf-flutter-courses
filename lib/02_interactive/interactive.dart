@@ -40,8 +40,6 @@ class _MyHomePageState extends State<MyHomePage>
   double widthContainer = 100;
   double heightContainer = 100;
 
-  double startDragTop = 0;
-  double startDragLeft = 0;
   double offsetTop = 0;
   double offsetLeft = 0;
 
@@ -54,6 +52,16 @@ class _MyHomePageState extends State<MyHomePage>
     parent: _controller,
     curve: Curves.easeInOut,
   );
+
+  @override
+  void didChangeDependencies() {
+    widthScrean = MediaQuery.of(context).size.width;
+    heightScrean = MediaQuery.of(context).size.height;
+
+    offsetLeft = widthScrean / 2 - widthContainer / 2;
+    offsetTop = heightScrean / 2 - heightContainer / 2;
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
@@ -71,18 +79,13 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    widthScrean = MediaQuery.of(context).size.width;
-    heightScrean = MediaQuery.of(context).size.height;
-
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
           Positioned(
-            top: (offsetTop - startDragTop) +
-                (heightScrean / 2 - heightContainer / 2),
-            left: (offsetLeft - startDragLeft) +
-                (widthScrean / 2 - widthContainer / 2),
+            top: offsetTop,
+            left: offsetLeft,
             width: widthContainer,
             height: heightContainer,
             child: RotationTransition(
@@ -100,20 +103,10 @@ class _MyHomePageState extends State<MyHomePage>
             child: GestureDetector(
               onTap: changeColorContainer,
               onLongPress: rotateContainer,
-              onPanStart: (details) {
-                startDragLeft = details.globalPosition.dx;
-                startDragTop = details.globalPosition.dy;
-              },
               onPanUpdate: (details) => setState(() {
-                offsetLeft = details.globalPosition.dx;
-                offsetTop = details.globalPosition.dy;
+                offsetLeft = offsetLeft + details.delta.dx;
+                offsetTop = offsetTop + details.delta.dy;
               }),
-              onPanEnd: (details) {
-                offsetTop = 0;
-                offsetLeft = 0;
-                startDragLeft = 0;
-                startDragTop = 0;
-              },
             ),
           )
         ],

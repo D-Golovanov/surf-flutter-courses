@@ -2,71 +2,30 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:surf_flutter_courses_template/02_color_pallete/color_box.dart';
-import 'package:surf_flutter_courses_template/02_color_pallete/mock.dart';
-import 'package:surf_flutter_courses_template/02_color_pallete/presentation/screens/detail_color_screen.dart';
-import 'package:surf_flutter_courses_template/02_color_pallete/presentation/screens/home_screen.dart';
+import 'package:surf_flutter_courses_template/02_color_pallete/data/models/color_box_model.dart';
+import 'package:surf_flutter_courses_template/02_color_pallete/data/models/colors_list_model.dart';
+import 'package:surf_flutter_courses_template/02_color_pallete/data/repository/color_box_impl.dart';
+import 'package:surf_flutter_courses_template/02_color_pallete/data/source/color_box_local_data_source.dart';
+import 'package:surf_flutter_courses_template/02_color_pallete/presentation/widgets/app_bar_sliver_widget.dart';
 
-void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        textTheme: GoogleFonts.ubuntuTextTheme(),
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
-    );
-  }
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-Future<List<ColorBox>> getColorsPallete() async {
-  await Future.delayed(const Duration(seconds: 4));
-
-  return mockRespons['colors']!
-      .where((element) => element.containsKey('value'))
-      .map((e) => ColorBox.fromJSON(e))
-      .toList();
-/*
-  final response = mockRespons['colors'];
-
-  if (response != null) {
-    final sortingResponse =
-        response.where((element) => element.containsKey('value'));
-    final colorPalleteResponse =
-        sortingResponse.map((e) => ColorBox.fromJSON(e)).toList();
-    return colorPalleteResponse;
-  } else {
-    return [];
-  }
-  */
-}
-
-class HomeScreen1 extends StatefulWidget {
-  const HomeScreen1({
-    super.key,
-  });
-
-  @override
-  State<HomeScreen1> createState() => _HomeScreen1State();
-}
-
-class _HomeScreen1State extends State<HomeScreen1> {
-  late Future<List<ColorBox>> _colorPallete;
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<ColorsListModel> _colorPallete;
+  final repository =
+      ColorBoxRepositoryImpl(data: ColorBoxLocalDataSourceImpl());
 
   @override
   void initState() {
     super.initState();
-
     debugPrint('init state');
-    _colorPallete = getColorsPallete();
+
+    _colorPallete = repository.getColorBoxes();
   }
 
   @override
@@ -75,32 +34,12 @@ class _HomeScreen1State extends State<HomeScreen1> {
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            flexibleSpace: Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Эксклюзивная палитра «Colored Box»',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.6,
-                    height: 34.0 / 30.0,
-                    color: Color(0xFF252838),
-                  ),
-                ),
-              ),
-            ),
-            expandedHeight: 120,
-          ),
+          const AppBarSliverWidget(),
           FutureBuilder(
             future: _colorPallete,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                if (snapshot.hasData) {
                   return SliverPadding(
                     padding:
                         const EdgeInsets.only(left: 16, top: 40, right: 16),
@@ -111,9 +50,9 @@ class _HomeScreen1State extends State<HomeScreen1> {
                         crossAxisCount: 3,
                         mainAxisExtent: 180,
                       ),
-                      itemCount: snapshot.data!.length,
+                      itemCount: snapshot.data?.colorsList.length,
                       itemBuilder: (context, index) => ColorBoxCellWidget(
-                        colorBox: snapshot.data![index],
+                        colorBox: snapshot.data!.colorsList[index],
                       ),
                     ),
                   );
@@ -141,7 +80,7 @@ class _HomeScreen1State extends State<HomeScreen1> {
 }
 
 class ColorBoxCellWidget extends StatefulWidget {
-  final ColorBox colorBox;
+  final ColorBoxModel colorBox;
 
   const ColorBoxCellWidget({
     super.key,
@@ -180,14 +119,16 @@ class _ColorBoxCellWidgetState extends State<ColorBoxCellWidget> {
       },
       onLongPress: () =>
           copyClipBoard(context: context, value: widget.colorBox.hex),
-      onTap: () => Navigator.push(
+      onTap: () {},
+      /*
+      () => Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => DetailColorScreen(
             colorBox: widget.colorBox,
           ),
         ),
-      ),
+      ),*/
       child: Transform.scale(
         scale: _scaleWidget,
         child: Column(

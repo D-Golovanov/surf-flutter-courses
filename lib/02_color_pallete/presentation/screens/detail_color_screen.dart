@@ -72,7 +72,7 @@ class ContainerColorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => copyClipBoard(context: context, value: color),
+      // onTap: () => copyClipBoard(context: context, value: color),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

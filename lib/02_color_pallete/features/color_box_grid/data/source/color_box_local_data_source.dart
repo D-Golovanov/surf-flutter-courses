@@ -7,6 +7,6 @@ abstract interface class ColorBoxLocalDataSource {
 
 class ColorBoxLocalDataSourceImpl extends ColorBoxLocalDataSource {
   @override
-  Future<String> getAssetsFile() async =>
-      await rootBundle.loadString(ConstantConfig.assetsPath);
+  Future<String> getAssetsFile() =>
+      rootBundle.loadString(ConstantConfig.assetsPath);
 }

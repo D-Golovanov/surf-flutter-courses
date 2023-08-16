@@ -1,4 +1,4 @@
-import 'package:surf_flutter_courses_template/02_color_pallete/domain/entities/color_box.dart';
+import 'package:surf_flutter_courses_template/02_color_pallete/features/color_box_grid/domain/entities/color_box.dart';
 
 class ColorBoxModel extends ColorBoxEntity {
   const ColorBoxModel({

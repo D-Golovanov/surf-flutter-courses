@@ -28,8 +28,9 @@ class ColorBoxRepositoryImpl implements ColorBoxRepository {
 
       final response = ColorsBoxGridModel.fromJSON(sortColorsList);
       return response;
-    } catch (e) {
-      throw Exception('Ooops...');
+    } on Exception catch (e) {
+      print(e);
+      throw Exception(e);
     }
   }
 }

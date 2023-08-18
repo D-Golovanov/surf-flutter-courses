@@ -10,7 +10,7 @@ part 'color_box_grid_event.dart';
 part 'color_box_grid_state.dart';
 
 class ColorBoxGridBloc extends Bloc<ColorBoxGridEvent, ColorBoxGridState> {
-  final ColorBoxRepository colorBoxRepository;
+  final IColorBoxRepository colorBoxRepository;
 
   ColorBoxGridBloc({required this.colorBoxRepository})
       : super(ColorBoxGridLoading()) {

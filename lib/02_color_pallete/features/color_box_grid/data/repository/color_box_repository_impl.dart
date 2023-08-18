@@ -4,7 +4,7 @@ import 'package:surf_flutter_courses_template/02_color_pallete/features/color_bo
 import 'package:surf_flutter_courses_template/02_color_pallete/features/color_box_grid/data/source/color_box_local_data_source.dart';
 import 'package:surf_flutter_courses_template/02_color_pallete/features/color_box_grid/domain/repository/color_box_repository.dart';
 
-class ColorBoxRepositoryImpl implements ColorBoxRepository {
+class ColorBoxRepositoryImpl implements IColorBoxRepository {
   final ColorBoxLocalDataSourceImpl data;
 
   ColorBoxRepositoryImpl({required this.data});
@@ -29,7 +29,6 @@ class ColorBoxRepositoryImpl implements ColorBoxRepository {
       final response = ColorsBoxGridModel.fromJSON(sortColorsList);
       return response;
     } on Exception catch (e) {
-      print(e);
       throw Exception(e);
     }
   }

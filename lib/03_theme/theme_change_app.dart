@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/theme_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/user_profile_model.dart';
 
 import 'features/profile/presentation/profile.dart';
+import 'features/widgets/widgets.dart';
 
-class ThemeChangeApp extends StatelessWidget {
+class ThemeChangeApp extends StatefulWidget {
   const ThemeChangeApp({super.key});
+
+  @override
+  State<ThemeChangeApp> createState() => _ThemeChangeAppState();
+}
+
+class _ThemeChangeAppState extends State<ThemeChangeApp> {
+  final _themeModel = ThemeModel();
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +28,16 @@ class ThemeChangeApp extends StatelessWidget {
       awards: ['🥇', '🥇', '🥉', '🥈', '🥉'],
     );
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Profile(user: userGettingBefore),
-      theme: AppTheme.darkGreenTheme,
+    return ChangeNotifierProvider(
+      model: _themeModel,
+      child: Builder(builder: (context) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Profile(user: userGettingBefore),
+          theme:
+              ChangeNotifierProvider.watch<ThemeModel>(context)!.getThemeData(),
+        );
+      }),
     );
   }
 }

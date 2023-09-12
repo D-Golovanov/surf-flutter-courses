@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/theme_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/user_profile_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/presentation/widgets/widgets.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/widgets/widgets.dart';
 
 class InfoListWidget extends StatelessWidget {
   final UserProfileModel user;
@@ -28,7 +30,8 @@ class InfoListWidget extends StatelessWidget {
         const SizedBox(height: 8),
         ListTileWidget(
             subtitle: 'Тема оформления',
-            title: 'Системная',
+            title: ChangeNotifierProvider.read<ThemeModel>(context)!
+                .getTextTheme(),
             onTap: () => showThemeBottomSheet(context: context)),
         const SizedBox(height: 24),
       ],
@@ -50,8 +53,8 @@ class ListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeTextStyles extTheme =
-        Theme.of(context).extension<ThemeTextStyles>()!;
+    final TextStylesExtension extTheme =
+        Theme.of(context).extension<TextStylesExtension>()!;
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

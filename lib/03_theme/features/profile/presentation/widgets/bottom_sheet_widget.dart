@@ -1,259 +1,203 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/theme_model.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/widgets/widgets.dart';
 
 void showThemeBottomSheet({
   required BuildContext context,
-  // required SortingTypeModel model,
 }) {
   showModalBottomSheet(
     context: context,
-    // backgroundColor: AppColors.white,
-    // barrierColor: AppColors.darkTextWithOpacity40,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
     ),
-    builder: (context) => Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              'Тема оформления',
-              style: Theme.of(context).textTheme.bodyLarge,
+    builder: (context) {
+      CurrentTheme currentThemeGroup =
+          ChangeNotifierProvider.read<ThemeModel>(context)!
+              .getTheme()
+              .currentThemeEnum!;
+
+      return Wrap(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20)
+                .copyWith(top: 8, bottom: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Тема оформления',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                RadioListTileWidget(
+                  title: 'Системная',
+                  value: CurrentTheme.system,
+                  group: currentThemeGroup,
+                ),
+                RadioListTileWidget(
+                  title: 'Светлая',
+                  value: CurrentTheme.light,
+                  group: currentThemeGroup,
+                ),
+                if (ChangeNotifierProvider.watch<ThemeModel>(context)!
+                        .getTheme() ==
+                    CurrentTheme.light.currentThemeString)
+                  const SchemeButtonsWidget(),
+                RadioListTileWidget(
+                  title: 'Темная',
+                  value: CurrentTheme.dark,
+                  group: currentThemeGroup,
+                ),
+                if (ChangeNotifierProvider.watch<ThemeModel>(context)!
+                        .getTheme() ==
+                    CurrentTheme.dark.currentThemeString)
+                  const SchemeButtonsWidget(),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Готово'),
+                ),
+              ],
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.close),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          title: const Text(
-            "Системная",
           ),
-          value: 'Системная',
-          groupValue: '_radioGroup',
-          onChanged: (value) {},
-        ),
-      ],
-    ),
+        ],
+      );
+    },
   );
 }
 
-/*
+class SchemeModel {
+  final String title;
+  final String iconPath;
 
-class _BodyModalWidget extends StatefulWidget {
-  // final SortingTypeModel model;
-  const _BodyModalWidget({
-    required this.model,
-  });
-
-  @override
-  State<_BodyModalWidget> createState() => _BodyModalWidgetState();
+  SchemeModel({required this.title, required this.iconPath});
 }
 
-class _BodyModalWidgetState extends State<_BodyModalWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 24.0),
-        child: Column(
-          children: [
-            const _TitleModalWidget(),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: SingleChildScrollView(
-                child: RadioButtonList(model: widget.model),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TitleModalWidget extends StatelessWidget {
-  const _TitleModalWidget({
+class SchemeButtonsWidget extends StatelessWidget {
+  const SchemeButtonsWidget({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56.0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            AppStrings.sortingTitle,
-            style: AppStyle.largeTitle20Bold,
-          ),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(
-              Icons.close,
-              color: AppColors.darkText,
-            ),
-          ),
-        ],
+    final schemeButtonList = [
+      SchemeModel(
+        title: CurrentScheme.green.currentSchemeString,
+        iconPath: 'assets/images/icon_scheme_green.svg',
       ),
-    );
-  }
-}
-
-class RadioButtonList extends StatefulWidget {
-  final SortingTypeModel model;
-
-  const RadioButtonList({super.key, required this.model});
-
-  @override
-  State<RadioButtonList> createState() => _RadioButtonListState();
-}
-
-class _RadioButtonListState extends State<RadioButtonList> {
-  late SortingType _radioGroup;
-
-  @override
-  void initState() {
-    super.initState();
-    _radioGroup = widget.model.sortingType;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+      SchemeModel(
+        title: CurrentScheme.blue.currentSchemeString,
+        iconPath: 'assets/images/icon_scheme_blue.svg',
+      ),
+      SchemeModel(
+        title: CurrentScheme.orange.currentSchemeString,
+        iconPath: 'assets/images/icon_scheme_orange.svg',
+      ),
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "Без сортировки",
-            style: AppStyle.radioText16Regular,
+        const SizedBox(height: 8),
+        Text('Цветовая схема',
+            style:
+                Theme.of(context).extension<TextStylesExtension>()!.hintText),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 66,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: schemeButtonList.length,
+            itemBuilder: (context, index) {
+              bool isSelected = schemeButtonList[index].title ==
+                  ChangeNotifierProvider.read<ThemeModel>(context)!.getScheme();
+
+              return GestureDetector(
+                onTap: () {
+                  ChangeNotifierProvider.read<ThemeModel>(context)!
+                      .setScheme(schemeButtonList[index].title);
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: Theme.of(context)
+                        .extension<ColorsExtensions>()!
+                        .schemeButtonBackground,
+                    border: isSelected
+                        ? Border.all(
+                            width: 1, color: Theme.of(context).primaryColor)
+                        : null,
+                  ),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(schemeButtonList[index].iconPath),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Схема ${index + 1}',
+                        style: isSelected
+                            ? Theme.of(context).textTheme.bodySmall
+                            : Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context)
+                                    .extension<ColorsExtensions>()!
+                                    .schemeButtonTextNotSelected),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(width: 12);
+            },
           ),
-          value: SortingType.none,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
         ),
-        const SizedBox(height: 8.0),
-        const Divider(),
-        const SizedBox(height: 8.0),
-        const Text('По имени', style: AppStyle.cardText12Regular),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "По имени от А до Я",
-            style: AppStyle.radioText16Regular,
-          ),
-          value: SortingType.name,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
-        ),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "По имени от Я до А",
-            style: AppStyle.radioText16Regular,
-          ),
-          value: SortingType.nameDESC,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
-        ),
-        const SizedBox(height: 8.0),
-        const Divider(),
-        const SizedBox(height: 8.0),
-        const Text('По цене', style: AppStyle.cardText12Regular),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "По возрастанию",
-            style: AppStyle.radioText16Regular,
-          ),
-          value: SortingType.price,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
-        ),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "По убыванию",
-            style: AppStyle.radioText16Regular,
-          ),
-          value: SortingType.priceDESC,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
-        ),
-        const SizedBox(height: 8.0),
-        const Divider(),
-        const SizedBox(height: 8.0),
-        const Text('По типу', style: AppStyle.cardText12Regular),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "По типу от А до Я",
-            style: AppStyle.radioText16Regular,
-          ),
-          value: SortingType.type,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
-        ),
-        RadioListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-          activeColor: AppColors.green,
-          title: const Text(
-            "По типу от Я до А",
-            style: AppStyle.radioText16Regular,
-          ),
-          value: SortingType.typeDESC,
-          groupValue: _radioGroup,
-          onChanged: (value) {
-            setState(() {
-              _radioGroup = value!;
-              widget.model.changeType(value);
-            });
-          },
-        ),
+        const SizedBox(height: 8),
       ],
     );
   }
 }
-*/
+
+class RadioListTileWidget extends StatelessWidget {
+  final String title;
+  final CurrentTheme value;
+  final CurrentTheme group;
+
+  const RadioListTileWidget({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.group,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RadioListTile<CurrentTheme>(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+      title: Text(title),
+      value: value,
+      groupValue: group,
+      onChanged: (value) {
+        ChangeNotifierProvider.read<ThemeModel>(context)!
+            .setTheme(value!.currentThemeString);
+      },
+    );
+  }
+}

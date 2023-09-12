@@ -7,8 +7,8 @@ class AwardsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeTextStyles extTheme =
-        Theme.of(context).extension<ThemeTextStyles>()!;
+    final TextStylesExtension extTheme =
+        Theme.of(context).extension<TextStylesExtension>()!;
     return Column(
       children: [
         Text('Мои награды', style: extTheme.hintText),

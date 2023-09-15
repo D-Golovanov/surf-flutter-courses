@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
+import 'package:surf_flutter_courses_template/03_theme/core/build_context_extension.dart';
 
 class AwardsWidget extends StatelessWidget {
   final List<String> awards;
@@ -7,11 +7,9 @@ class AwardsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStylesExtension extTheme =
-        Theme.of(context).extension<TextStylesExtension>()!;
     return Column(
       children: [
-        Text('Мои награды', style: extTheme.hintText),
+        Text('Мои награды', style: context.textStyle.hintText),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -28,7 +26,6 @@ class AwardsWidget extends StatelessWidget {
 class _MedalTextWidget extends StatelessWidget {
   final String medal;
   const _MedalTextWidget({
-    super.key,
     required this.medal,
   });
 

@@ -16,11 +16,17 @@ class _ThemeChangeAppState extends State<ThemeChangeApp> {
   final _themeModel = ThemeModel();
 
   @override
+  void initState() {
+    super.initState();
+    _themeModel.getThemePref();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final userGettingBefore = UserProfileModel(
       name: 'Маркус Хассельборг',
       email: 'MarkusHSS@gmail.com',
-      birth: DateTime(1986, 03, 03),
+      birth: DateTime(1986, 11, 24),
       team: 'Сборная Швеции',
       position: 'Скип',
       avatar:

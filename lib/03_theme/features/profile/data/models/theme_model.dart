@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
 
 class ThemeModel extends ChangeNotifier {
-  String _theme = 'dark';
+  String _theme = 'system';
   String _scheme = 'green';
+
+  late SharedPreferences _pref;
+
+  Future<void> getThemePref() async {
+    _pref = await SharedPreferences.getInstance();
+    _theme = _pref.getString('theme') ?? _theme;
+    _scheme = _pref.getString('scheme') ?? _scheme;
+    notifyListeners();
+  }
+
+  Future<void> setThemePref(String theme) async {
+    _pref = await SharedPreferences.getInstance();
+    _pref.setString('theme', theme);
+  }
+
+  Future<void> setSchemePref(String scheme) async {
+    _pref = await SharedPreferences.getInstance();
+    _pref.setString('scheme', scheme);
+  }
 
   setTheme(String newTheme) {
     _theme = newTheme;
+    setThemePref(newTheme);
     notifyListeners();
   }
 
   setScheme(String newScheme) {
     _scheme = newScheme;
+    setSchemePref(newScheme);
     notifyListeners();
   }
 
@@ -28,7 +51,14 @@ class ThemeModel extends ChangeNotifier {
   ThemeData getThemeData() {
     switch (_theme) {
       case 'system':
-        return AppTheme(scheme: GreenSchemeColor()).ligthThemeData;
+        switch (
+            SchedulerBinding.instance.platformDispatcher.platformBrightness) {
+          case Brightness.light:
+            return AppTheme(scheme: GreenSchemeColor()).ligthThemeData;
+          case Brightness.dark:
+            return AppTheme(scheme: GreenSchemeColor()).darkThemeData;
+        }
+
       case 'light':
         switch (_scheme) {
           case 'green':

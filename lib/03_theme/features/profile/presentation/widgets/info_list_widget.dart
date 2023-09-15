@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
+import 'package:surf_flutter_courses_template/03_theme/core/build_context_extension.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/theme_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/user_profile_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/presentation/widgets/widgets.dart';
@@ -53,8 +53,6 @@ class ListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStylesExtension extTheme =
-        Theme.of(context).extension<TextStylesExtension>()!;
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -64,7 +62,7 @@ class ListTileWidget extends StatelessWidget {
         children: [
           Text(
             subtitle,
-            style: extTheme.hintText,
+            style: context.textStyle.hintText,
           ),
           Text(title),
         ],

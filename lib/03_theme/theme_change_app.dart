@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/theme_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/user_profile_model.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/profile/domain/repository/theme_repository.dart';
 
 import 'features/profile/presentation/profile.dart';
 import 'features/widgets/widgets.dart';
@@ -12,13 +14,32 @@ class ThemeChangeApp extends StatefulWidget {
   State<ThemeChangeApp> createState() => _ThemeChangeAppState();
 }
 
-class _ThemeChangeAppState extends State<ThemeChangeApp> {
+class _ThemeChangeAppState extends State<ThemeChangeApp>
+    with WidgetsBindingObserver {
   final _themeModel = ThemeModel();
+
+  Future<void> _initTheme() async {
+    final getIt = GetIt.I<IThemeRepository>();
+    final themePref = await getIt.getTheme();
+    final schemePref = await getIt.getScheme();
+
+    _themeModel.setTheme(themePref);
+    _themeModel.setScheme(schemePref);
+  }
 
   @override
   void initState() {
     super.initState();
-    _themeModel.getThemePref();
+    WidgetsBinding.instance.addObserver(this);
+    _initTheme().then((_) => _themeModel.getThemeData());
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    if (_themeModel.getTheme() == CurrentTheme.system.currentThemeString) {
+      _themeModel.setTheme(CurrentTheme.system.currentThemeString);
+    }
   }
 
   @override
@@ -26,7 +47,7 @@ class _ThemeChangeAppState extends State<ThemeChangeApp> {
     final userGettingBefore = UserProfileModel(
       name: 'Маркус Хассельборг',
       email: 'MarkusHSS@gmail.com',
-      birth: DateTime(1986, 11, 24),
+      birth: DateTime(1986, 3, 3),
       team: 'Сборная Швеции',
       position: 'Скип',
       avatar:

@@ -71,7 +71,7 @@ class AppTheme {
               color: scheme.textDark),
           elevation: 0,
           backgroundColor: scheme.primary,
-          foregroundColor: scheme.backgroundLight,
+          foregroundColor: scheme.textDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -192,7 +192,7 @@ class AppTheme {
           ),
           elevation: 0,
           backgroundColor: scheme.primary,
-          foregroundColor: scheme.backgroundDark,
+          foregroundColor: scheme.textDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

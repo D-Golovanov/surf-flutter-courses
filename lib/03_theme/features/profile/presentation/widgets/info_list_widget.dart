@@ -22,7 +22,8 @@ class InfoListWidget extends StatelessWidget {
         const SizedBox(height: 8),
         ListTileWidget(
             subtitle: 'Дата рождения',
-            title: '${user.birth.day}.${user.birth.month}.${user.birth.year}'),
+            title:
+                '${user.birth.day.toString().padLeft(2, '0')}.${user.birth.month.toString().padLeft(2, '0')}.${user.birth.year}'),
         const SizedBox(height: 8),
         ListTileWidget(subtitle: 'Команда', title: user.team, onTap: () {}),
         const SizedBox(height: 8),

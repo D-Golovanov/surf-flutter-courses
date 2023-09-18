@@ -1,40 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_it/get_it.dart';
 import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
+import 'package:surf_flutter_courses_template/03_theme/features/profile/domain/repository/theme_repository.dart';
 
 class ThemeModel extends ChangeNotifier {
   String _theme = 'system';
   String _scheme = 'green';
 
-  late SharedPreferences _pref;
-
-  Future<void> getThemePref() async {
-    _pref = await SharedPreferences.getInstance();
-    _theme = _pref.getString('theme') ?? _theme;
-    _scheme = _pref.getString('scheme') ?? _scheme;
-    notifyListeners();
-  }
-
-  Future<void> setThemePref(String theme) async {
-    _pref = await SharedPreferences.getInstance();
-    _pref.setString('theme', theme);
-  }
-
-  Future<void> setSchemePref(String scheme) async {
-    _pref = await SharedPreferences.getInstance();
-    _pref.setString('scheme', scheme);
-  }
-
-  setTheme(String newTheme) {
+  setTheme(String newTheme) async {
     _theme = newTheme;
-    setThemePref(newTheme);
+    GetIt.I<IThemeRepository>().setTheme(_theme);
     notifyListeners();
   }
 
   setScheme(String newScheme) {
     _scheme = newScheme;
-    setSchemePref(newScheme);
+    GetIt.I<IThemeRepository>().setScheme(_scheme);
     notifyListeners();
   }
 

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:surf_flutter_courses_template/04_gallery/features/grid_photo/presentation/widgets/widgets.dart';
 
 class GridPhoto extends StatelessWidget {
   const GridPhoto({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          title: Image.asset('assets/images/logo_postgram.png'),
-        )
-      ],
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: CustomScrollView(
+        slivers: [
+          MySliverAppBar(),
+          MySliverGrid(),
+        ],
+      ),
     );
   }
 }

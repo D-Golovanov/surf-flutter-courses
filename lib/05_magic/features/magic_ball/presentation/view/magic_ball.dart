@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
+import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/data/model/magic_text_model.dart';
 import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/data/repository/get_magic_text_impl.dart';
 import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/presentation/widgets/widgets.dart';
 
@@ -23,7 +27,7 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
   late Animation<double> _animationTextOpacityAndScale;
 
   bool isAnimate = false;
-  String? magicText;
+  MagicTextModel? magicText;
 
   @override
   void initState() {
@@ -35,6 +39,18 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
         AnimationController(duration: duration300, vsync: this);
     _controllerHintOpacity =
         AnimationController(duration: duration300, vsync: this);
+
+    userAccelerometerEvents.listen(
+      (UserAccelerometerEvent event) {
+        if (event.x.abs() > 6 || event.y.abs() > 6 || event.z.abs() > 6) {
+          if (!isAnimate) {
+            _playAnimation();
+          }
+        }
+      },
+      onError: (error) {},
+      cancelOnError: true,
+    );
 
     listener = (status) {
       if (status == AnimationStatus.completed) {
@@ -153,10 +169,12 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Text(
-                      magicText ?? '',
+                      magicText?.text ?? '',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: magicText?.error ?? false
+                            ? Colors.red
+                            : Colors.white,
                         fontSize: 48,
                         fontWeight: FontWeight.w400,
                         height: 1,

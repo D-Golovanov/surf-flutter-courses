@@ -1,103 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:get_it/get_it.dart';
 import 'package:surf_flutter_courses_template/03_theme/core/theme/theme.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/domain/repository/theme_repository.dart';
 
+enum AppThemeMode { system, light, dark }
+
+enum AppSchemeMode { green, blue, orange }
+
 class ThemeModel extends ChangeNotifier {
-  String _theme = 'system';
-  String _scheme = 'green';
+  final IThemeRepository _themeRepository;
 
-  setTheme(String newTheme) async {
+  ThemeModel(this._themeRepository);
+
+  AppThemeMode _theme = AppThemeMode.system;
+  AppSchemeMode _scheme = AppSchemeMode.green;
+
+  AppThemeMode get theme => _theme;
+  AppSchemeMode get scheme => _scheme;
+
+  Future<void> setTheme(AppThemeMode newTheme) async {
     _theme = newTheme;
-    GetIt.I<IThemeRepository>().setTheme(_theme);
+    await _themeRepository.setTheme(_theme);
     notifyListeners();
   }
 
-  setScheme(String newScheme) {
+  Future<void> setScheme(AppSchemeMode newScheme) async {
+    if (newScheme == _scheme) return;
+
     _scheme = newScheme;
-    GetIt.I<IThemeRepository>().setScheme(_scheme);
+    await _themeRepository.setScheme(_scheme);
     notifyListeners();
   }
-
-  String getTheme() => _theme;
-  String getScheme() => _scheme;
-
-  String getTextTheme() => switch (_theme) {
-        'system' => 'Системная',
-        'light' => 'Светлая',
-        'dark' => 'Темная',
-        _ => 'Error',
-      };
 
   ThemeData getThemeData() {
+    Brightness brightness =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
+
     switch (_theme) {
-      case 'system':
-        switch (
-            SchedulerBinding.instance.platformDispatcher.platformBrightness) {
-          case Brightness.light:
-            return AppTheme(scheme: GreenSchemeColor()).ligthThemeData;
-          case Brightness.dark:
-            return AppTheme(scheme: GreenSchemeColor()).darkThemeData;
-        }
-
-      case 'light':
-        switch (_scheme) {
-          case 'green':
-            return AppTheme(scheme: GreenSchemeColor()).ligthThemeData;
-          case 'blue':
-            return AppTheme(scheme: BlueSchemeColor()).ligthThemeData;
-          case 'orange':
-            return AppTheme(scheme: OrangeSchemeColor()).ligthThemeData;
-        }
-      case 'dark':
-        switch (_scheme) {
-          case 'green':
-            return AppTheme(scheme: GreenSchemeColor()).darkThemeData;
-          case 'blue':
-            return AppTheme(scheme: BlueSchemeColor()).darkThemeData;
-          case 'orange':
-            return AppTheme(scheme: OrangeSchemeColor()).darkThemeData;
-        }
+      case AppThemeMode.system:
+        _scheme = AppSchemeMode.green;
+        break;
+      case AppThemeMode.light:
+        brightness = Brightness.light;
+      case AppThemeMode.dark:
+        brightness = Brightness.dark;
     }
-    return AppTheme(scheme: GreenSchemeColor()).ligthThemeData;
+
+    final schemeColor = switch (_scheme) {
+      AppSchemeMode.green => GreenSchemeColor(),
+      AppSchemeMode.blue => BlueSchemeColor(),
+      AppSchemeMode.orange => OrangeSchemeColor()
+    };
+
+    return switch (brightness) {
+      Brightness.light => AppTheme(scheme: schemeColor).ligthThemeData,
+      Brightness.dark => AppTheme(scheme: schemeColor).darkThemeData
+    };
   }
-}
 
-enum CurrentTheme { system, light, dark }
+  Future<void> loadFromCache() async {
+    final theme = await _themeRepository.getTheme();
+    final scheme = await _themeRepository.getScheme();
 
-extension CurrentThemeExtensionOnEnum on CurrentTheme {
-  String get currentThemeString => switch (this) {
-        CurrentTheme.system => 'system',
-        CurrentTheme.light => 'light',
-        CurrentTheme.dark => 'dark',
-      };
-}
+    setTheme(theme);
+    setScheme(scheme);
+  }
 
-extension CurrentThemeExtensionOnString on String {
-  CurrentTheme? get currentThemeEnum => switch (this) {
-        'system' => CurrentTheme.system,
-        'light' => CurrentTheme.light,
-        'dark' => CurrentTheme.dark,
-        _ => CurrentTheme.system,
-      };
-}
+  Future<void> setSystemThemeFromBrightness() async {
+    if (_theme == AppThemeMode.system) {
+      setTheme(_theme);
+    }
+  }
 
-enum CurrentScheme { green, blue, orange }
-
-extension CurrentSchemeExtensionOnEnum on CurrentScheme {
-  String get currentSchemeString => switch (this) {
-        CurrentScheme.green => 'green',
-        CurrentScheme.blue => 'blue',
-        CurrentScheme.orange => 'orange',
-      };
-}
-
-extension CurrentSchemeExtensionOnString on String {
-  CurrentScheme? get currentSchemeEnum => switch (this) {
-        'green' => CurrentScheme.green,
-        'blue' => CurrentScheme.blue,
-        'orange' => CurrentScheme.orange,
-        _ => CurrentScheme.green,
+  String getTextTheme() => switch (_theme) {
+        AppThemeMode.system => 'Системная',
+        AppThemeMode.light => 'Светлая',
+        AppThemeMode.dark => 'Темная',
       };
 }

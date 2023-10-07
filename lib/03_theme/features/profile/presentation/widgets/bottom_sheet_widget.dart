@@ -14,41 +14,43 @@ void showThemeBottomSheet({
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
     ),
     builder: (context) {
-      CurrentTheme currentThemeGroup =
-          ChangeNotifierProvider.read<ThemeModel>(context)!
-              .getTheme()
-              .currentThemeEnum!;
+      AppThemeMode currentThemeGroup =
+          ChangeNotifierProvider.read<ThemeModel>(context)!.theme;
 
-      return BodyBottoSheet(currentThemeGroup: currentThemeGroup);
+      return BodyBottomSheet(currentThemeGroup: currentThemeGroup);
     },
   );
 }
 
-class BodyBottoSheet extends StatefulWidget {
-  const BodyBottoSheet({
+class BodyBottomSheet extends StatefulWidget {
+  const BodyBottomSheet({
     super.key,
     required this.currentThemeGroup,
   });
 
-  final CurrentTheme currentThemeGroup;
+  final AppThemeMode currentThemeGroup;
 
   @override
-  State<BodyBottoSheet> createState() => _BodyBottoSheetState();
+  State<BodyBottomSheet> createState() => _BodyBottomSheetState();
 }
 
-class _BodyBottoSheetState extends State<BodyBottoSheet> {
-  late String prevTheme;
-  late String prevScheme;
+class _BodyBottomSheetState extends State<BodyBottomSheet> {
+  late AppThemeMode prevTheme;
+  late AppSchemeMode prevScheme;
 
   @override
   void initState() {
-    prevTheme = ChangeNotifierProvider.read<ThemeModel>(context)!.getTheme();
-    prevScheme = ChangeNotifierProvider.read<ThemeModel>(context)!.getScheme();
+    final themeModel = ChangeNotifierProvider.read<ThemeModel>(context)!;
+    prevTheme = themeModel.theme;
+    prevScheme = themeModel.scheme;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeModel = ChangeNotifierProvider.watch<ThemeModel>(context)!;
+
     return Wrap(
       children: [
         Padding(
@@ -61,26 +63,22 @@ class _BodyBottoSheetState extends State<BodyBottoSheet> {
               const SizedBox(height: 8),
               RadioListTileWidget(
                 title: 'Системная',
-                value: CurrentTheme.system,
+                value: AppThemeMode.system,
                 group: widget.currentThemeGroup,
               ),
               RadioListTileWidget(
                 title: 'Светлая',
-                value: CurrentTheme.light,
+                value: AppThemeMode.light,
                 group: widget.currentThemeGroup,
               ),
-              if (ChangeNotifierProvider.watch<ThemeModel>(context)!
-                      .getTheme() ==
-                  CurrentTheme.light.currentThemeString)
+              if (themeModel.theme == AppThemeMode.light)
                 const SchemeButtonsWidget(),
               RadioListTileWidget(
                 title: 'Темная',
-                value: CurrentTheme.dark,
+                value: AppThemeMode.dark,
                 group: widget.currentThemeGroup,
               ),
-              if (ChangeNotifierProvider.watch<ThemeModel>(context)!
-                      .getTheme() ==
-                  CurrentTheme.dark.currentThemeString)
+              if (themeModel.theme == AppThemeMode.dark)
                 const SchemeButtonsWidget(),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -115,12 +113,14 @@ class TitleBottomSheet extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {
-              final a = context.findAncestorStateOfType<_BodyBottoSheetState>();
+              final a =
+                  context.findAncestorStateOfType<_BodyBottomSheetState>();
               if (a != null) {
-                ChangeNotifierProvider.read<ThemeModel>(context)!
-                    .setTheme(a.prevTheme);
-                ChangeNotifierProvider.read<ThemeModel>(context)!
-                    .setScheme(a.prevScheme);
+                final themeModel =
+                    ChangeNotifierProvider.read<ThemeModel>(context)!;
+
+                themeModel.setTheme(a.prevTheme);
+                themeModel.setScheme(a.prevScheme);
               }
               Navigator.of(context).pop();
             },

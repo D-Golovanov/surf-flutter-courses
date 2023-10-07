@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/user_profile_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/presentation/widgets/widgets.dart';
 
-class Profile extends StatelessWidget {
+class ProfileScreen extends StatelessWidget {
   final UserProfileModel user;
-  const Profile({super.key, required this.user});
+  const ProfileScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {

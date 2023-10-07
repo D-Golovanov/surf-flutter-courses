@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/theme_model.dart';
 import 'package:surf_flutter_courses_template/03_theme/features/profile/data/models/user_profile_model.dart';
-import 'package:surf_flutter_courses_template/03_theme/features/profile/domain/repository/theme_repository.dart';
+import 'package:surf_flutter_courses_template/03_theme/main.dart';
 
 import 'features/profile/presentation/profile.dart';
 import 'features/widgets/widgets.dart';
@@ -16,30 +15,19 @@ class ThemeChangeApp extends StatefulWidget {
 
 class _ThemeChangeAppState extends State<ThemeChangeApp>
     with WidgetsBindingObserver {
-  final _themeModel = ThemeModel();
-
-  Future<void> _initTheme() async {
-    final getIt = GetIt.I<IThemeRepository>();
-    final themePref = await getIt.getTheme();
-    final schemePref = await getIt.getScheme();
-
-    _themeModel.setTheme(themePref);
-    _themeModel.setScheme(schemePref);
-  }
+  final ThemeModel _themeModel = injector();
 
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initTheme().then((_) => _themeModel.getThemeData());
+    _themeModel.loadFromCache();
+    super.initState();
   }
 
   @override
   void didChangePlatformBrightness() {
+    _themeModel.setSystemThemeFromBrightness();
     super.didChangePlatformBrightness();
-    if (_themeModel.getTheme() == CurrentTheme.system.currentThemeString) {
-      _themeModel.setTheme(CurrentTheme.system.currentThemeString);
-    }
   }
 
   @override
@@ -60,7 +48,7 @@ class _ThemeChangeAppState extends State<ThemeChangeApp>
       child: Builder(builder: (context) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: Profile(user: userGettingBefore),
+          home: ProfileScreen(user: userGettingBefore),
           theme:
               ChangeNotifierProvider.watch<ThemeModel>(context)!.getThemeData(),
         );

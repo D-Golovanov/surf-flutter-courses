@@ -64,7 +64,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle().copyWith(
+          textStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -80,7 +80,7 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          textStyle: const TextStyle().copyWith(
+          textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
             height: 1.5,
@@ -96,7 +96,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          textStyle: const TextStyle().copyWith(
+          textStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             height: 1.14,
@@ -184,7 +184,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle().copyWith(
+          textStyle: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
             height: 1.5,
@@ -201,7 +201,7 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          textStyle: const TextStyle().copyWith(
+          textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
             height: 1.5,
@@ -217,7 +217,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          textStyle: const TextStyle().copyWith(
+          textStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             height: 1.14,

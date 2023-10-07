@@ -4,8 +4,8 @@ import 'package:surf_flutter_courses_template/03_theme/features/widgets/widgets.
 
 class RadioListTileWidget extends StatelessWidget {
   final String title;
-  final CurrentTheme value;
-  final CurrentTheme group;
+  final AppThemeMode value;
+  final AppThemeMode group;
 
   const RadioListTileWidget({
     super.key,
@@ -16,14 +16,13 @@ class RadioListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RadioListTile<CurrentTheme>(
+    return RadioListTile<AppThemeMode>(
       contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
       title: Text(title),
       value: value,
       groupValue: group,
       onChanged: (value) {
-        ChangeNotifierProvider.read<ThemeModel>(context)!
-            .setTheme(value!.currentThemeString);
+        ChangeNotifierProvider.read<ThemeModel>(context)!.setTheme(value!);
       },
     );
   }

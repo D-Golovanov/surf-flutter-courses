@@ -14,18 +14,22 @@ class SchemeButtonsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final schemeButtonList = [
       SchemeModel(
-        title: CurrentScheme.green.currentSchemeString,
+        title: AppSchemeMode.green,
         iconPath: 'assets/images/icon_scheme_green.svg',
       ),
       SchemeModel(
-        title: CurrentScheme.blue.currentSchemeString,
+        title: AppSchemeMode.blue,
         iconPath: 'assets/images/icon_scheme_blue.svg',
       ),
       SchemeModel(
-        title: CurrentScheme.orange.currentSchemeString,
+        title: AppSchemeMode.orange,
         iconPath: 'assets/images/icon_scheme_orange.svg',
       ),
     ];
+
+    final themeModel = ChangeNotifierProvider.watch<ThemeModel>(context)!;
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,13 +42,14 @@ class SchemeButtonsWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: schemeButtonList.length,
             itemBuilder: (context, index) {
-              bool isSelected = schemeButtonList[index].title ==
-                  ChangeNotifierProvider.read<ThemeModel>(context)!.getScheme();
+              final schemeButton = schemeButtonList[index];
+
+              bool isSelected = schemeButton.title == themeModel.scheme;
 
               return GestureDetector(
                 onTap: () {
                   ChangeNotifierProvider.read<ThemeModel>(context)!
-                      .setScheme(schemeButtonList[index].title);
+                      .setScheme(schemeButton.title);
                 },
                 child: Container(
                   padding:
@@ -53,22 +58,21 @@ class SchemeButtonsWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     color: context.color.schemeButtonBackground,
                     border: isSelected
-                        ? Border.all(
-                            width: 1, color: Theme.of(context).primaryColor)
+                        ? Border.all(width: 1, color: theme.primaryColor)
                         : null,
                   ),
                   child: Column(
                     children: [
-                      SvgPicture.asset(schemeButtonList[index].iconPath),
+                      SvgPicture.asset(schemeButton.iconPath),
                       const SizedBox(height: 4),
                       Text(
                         'Схема ${index + 1}',
                         style: isSelected
-                            ? Theme.of(context).textTheme.bodySmall
-                            : Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color:
-                                      context.color.schemeButtonTextNotSelected,
-                                ),
+                            ? theme.textTheme.bodySmall
+                            : theme.textTheme.bodySmall?.copyWith(
+                                color:
+                                    context.color.schemeButtonTextNotSelected,
+                              ),
                       ),
                     ],
                   ),

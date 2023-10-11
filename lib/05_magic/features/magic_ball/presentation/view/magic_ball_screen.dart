@@ -2,19 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/data/model/magic_text_model.dart';
-import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/data/repository/get_magic_text_impl.dart';
+import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/domain/repository/get_magic_text_repository.dart';
 import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/presentation/widgets/widgets.dart';
 
-class MagicBall extends StatefulWidget {
-  const MagicBall({super.key});
+class MagicBallScreen extends StatefulWidget {
+  final IGetTextRepository repository;
+
+  const MagicBallScreen({super.key, required this.repository});
 
   @override
-  State<MagicBall> createState() => _MagicBallState();
+  State<MagicBallScreen> createState() => _MagicBallScreenState();
 }
 
-class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
-  final _repo = GetMagicTextImpl();
+class _MagicBallScreenState extends State<MagicBallScreen>
+    with TickerProviderStateMixin {
   final duration300 = const Duration(milliseconds: 300);
 
   late AnimationController _controllerShpereRotate;
@@ -27,7 +28,8 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
   late Animation<double> _animationTextOpacityAndScale;
 
   bool isAnimate = false;
-  MagicTextModel? magicText;
+  bool isError = false;
+  String? magicText;
 
   @override
   void initState() {
@@ -112,7 +114,14 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
 
     _controllerHintOpacity.forward();
     await _controllerShpereRotate.forward();
-    magicText = await _repo.getMagicText();
+
+    await widget.repository
+        .getText()
+        .then((value) => magicText = value)
+        .onError((error, stackTrace) {
+      isError = true;
+      return magicText = error.toString();
+    });
 
     await _controllerShpereScale.forward();
     await _controllerTextOpacity.forward();
@@ -128,6 +137,7 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
 
   void _resetAnimation() {
     magicText = null;
+    isError = false;
     _controllerShpereRotate.reset();
     _controllerShpereScale.reset();
     _controllerHintOpacity.reset();
@@ -169,12 +179,10 @@ class _MagicBallState extends State<MagicBall> with TickerProviderStateMixin {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Text(
-                      magicText?.text ?? '',
+                      magicText ?? '',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: magicText?.error ?? false
-                            ? Colors.red
-                            : Colors.white,
+                        color: isError ? Colors.red : Colors.white,
                         fontSize: 48,
                         fontWeight: FontWeight.w400,
                         height: 1,

@@ -1,5 +1,5 @@
-import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/data/model/magic_text_model.dart';
-
-abstract interface class IGetMagicTextRepository {
-  Future<MagicTextModel> getMagicText();
+/// Interface describing the logic for retrieving random text
+abstract interface class IGetTextRepository {
+  /// Get random text from API
+  Future<String> getText();
 }

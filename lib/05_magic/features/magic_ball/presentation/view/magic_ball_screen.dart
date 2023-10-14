@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/domain/repository/get_magic_text_repository.dart';
+import 'package:surf_flutter_courses_template/05_magic/core/di/di_container.dart';
 import 'package:surf_flutter_courses_template/05_magic/features/magic_ball/presentation/widgets/widgets.dart';
 
 class MagicBallScreen extends StatefulWidget {
-  final IGetTextRepository repository;
-
-  const MagicBallScreen({super.key, required this.repository});
+  const MagicBallScreen({super.key});
 
   @override
   State<MagicBallScreen> createState() => _MagicBallScreenState();
@@ -115,14 +113,12 @@ class _MagicBallScreenState extends State<MagicBallScreen>
     _controllerHintOpacity.forward();
     await _controllerShpereRotate.forward();
 
-    await widget.repository
-        .getText()
-        .then((value) => magicText = value)
-        .onError((error, stackTrace) {
+    try {
+      magicText = await DIContainer.apiService.getText();
+    } catch (e) {
       isError = true;
-      return magicText = error.toString();
-    });
-
+      magicText = e.toString();
+    }
     await _controllerShpereScale.forward();
     await _controllerTextOpacity.forward();
 

@@ -11,8 +11,8 @@ class GetMagicTextImpl implements IGetTextRepository {
     try {
       final response = await dio.get('/api');
       return response.data['reading'];
-    } on DioException catch (e) {
-      throw Exception(e.message);
+    } on Exception catch (e) {
+      throw Exception(e);
     }
   }
 }

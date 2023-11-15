@@ -38,6 +38,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       if (widget.validator != null) {
         errorText = widget.validator!(widget.controller.text);
         setState(() {});
+        print(widget.controller.text);
+        // _focusNode.nextFocus();
       }
     }
   }

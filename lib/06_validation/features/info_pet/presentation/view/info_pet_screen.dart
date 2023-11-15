@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/input_formattrs.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/text_field_on_changed_with_validator.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/pet_type.dart';
-import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/text_form_field_state.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/widgets.dart';
 
 /*
@@ -26,7 +25,6 @@ import 'package:surf_flutter_courses_template/06_validation/features/info_pet/pr
     ]
   }
 */
-
 enum ButtonState { enable, disabled, sending }
 
 class InfoPetScreen extends StatefulWidget {
@@ -57,6 +55,8 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
     // });
 
     _namePetController.addListener(_formSubmit);
+    _weigthPetController.addListener(_formSubmit);
+    _emailPetController.addListener(_formSubmit);
     super.initState();
   }
 
@@ -67,18 +67,22 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
     _namePetController
       ..removeListener(_formSubmit)
       ..dispose();
+    _weigthPetController
+      ..removeListener(_formSubmit)
+      ..dispose();
+    _emailPetController
+      ..removeListener(_formSubmit)
+      ..dispose();
 
     _birthdayPetController.dispose();
-
-    _weigthPetController.dispose();
-
-    _emailPetController.dispose();
 
     super.dispose();
   }
 
   void _formSubmit() {
-    if (Validator.name(_namePetController.text) == null) {
+    if (Validator.name(_namePetController.text) == null &&
+        Validator.weigth(_weigthPetController.text) == null &&
+        Validator.email(_emailPetController.text) == null) {
       _buttonNotifier.value = ButtonState.enable;
     } else {
       _buttonNotifier.value = ButtonState.disabled;
@@ -87,15 +91,20 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
 
   DateTime selectedDate = DateTime.now();
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(
+      {required BuildContext context,
+      required TextEditingController controller}) async {
+    print(selectedDate);
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        firstDate: DateTime(DateTime.now().year - 20),
+        lastDate: DateTime.now());
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        controller.text =
+            '${selectedDate.day.toString().padLeft(2, '0')}.${selectedDate.month.toString().padLeft(2, '0')}.${selectedDate.year}';
       });
     }
   }
@@ -114,24 +123,25 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                 delegate: SliverChildListDelegate(
                   [
                     ValueListenableBuilder<TypePet>(
-                        valueListenable: _currentTypePet,
-                        builder: (_, __, ___) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ...TypePet.values.map(
-                                (petItem) => GestureDetector(
-                                  onTap: () => _currentTypePet.value = petItem,
-                                  child: PetButton(
-                                    pet: petItem,
-                                    isActive: _currentTypePet.value.title ==
-                                        petItem.title,
-                                  ),
+                      valueListenable: _currentTypePet,
+                      builder: (_, __, ___) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ...TypePet.values.map(
+                              (petItem) => GestureDetector(
+                                onTap: () => _currentTypePet.value = petItem,
+                                child: PetButton(
+                                  pet: petItem,
+                                  isActive: _currentTypePet.value.title ==
+                                      petItem.title,
                                 ),
                               ),
-                            ],
-                          );
-                        }),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                     const SizedBox(height: 32),
                     CustomTextFormField(
                       controller: _namePetController,
@@ -146,7 +156,11 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                     const SizedBox(height: 16),
                     CustomTextFormField(
                       controller: _birthdayPetController,
-                      validator: Validator.name,
+                      validator: Validator.date,
+                      onTap: () => _selectDate(
+                        context: context,
+                        controller: _birthdayPetController,
+                      ),
                       label: 'День рождения питомца',
                       readOnly: true,
                     ),
@@ -158,6 +172,8 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^(\d*[\.,]?\d?\d?|\d?[\.,])\d?\d?')),
                         Decimal(),
                       ],
                     ),
@@ -167,57 +183,16 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                       validator: Validator.email,
                       label: 'Почта хозяина',
                       keyboardType: TextInputType.emailAddress,
-                      inputFormatters: [
-                        // Email(),
-                      ],
                     ),
-                    /*
-                    ValueListenableBuilder<TextFormFieldState>(
-                      valueListenable: _birthdayPetState,
+                    ValueListenableBuilder<TypePet>(
+                      valueListenable: _currentTypePet,
                       builder: (_, state, __) {
-                        return CustomTextFormField(
-                          controller: _birthdayPetController,
-                          state: state,
-                          // onChanged: (value) =>
-                          //     TextFieldOnChangedWithValidator(_birthdayPetState)
-                          //         .email(value),
-                          onTap: () => _selectDate(context),
-                          label: 'День рождения питомца',
-                          keyboardType: TextInputType.datetime,
-                          readOnly: true,
-                        );
+                        return switch (state) {
+                          TypePet.dog || TypePet.cat => const Vactination(),
+                          _ => const SizedBox.shrink(),
+                        };
                       },
                     ),
-                    const SizedBox(height: 16),
-                    ValueListenableBuilder<TextFormFieldState>(
-                      valueListenable: _weigthPetState,
-                      builder: (_, state, __) {
-                        return CustomTextFormField(
-                          controller: _weigthPetController,
-                          state: state,
-                          // onChanged: (value) =>
-                          //     TextFieldOnChangedWithValidator(_weigthPetState)
-                          // .minNum(value, min: 0),
-                          label: 'Вес, кг',
-                          keyboardType: TextInputType.number,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ValueListenableBuilder<TextFormFieldState>(
-                      valueListenable: _emailPetState,
-                      builder: (_, state, __) {
-                        return CustomTextFormField(
-                          controller: _emailPetController,
-                          label: 'Почта хозяина',
-                          // onChanged: (value) =>
-                          //     TextFieldOnChangedWithValidator(_emailPetState)
-                          //         .email(value),
-                          state: state,
-                          keyboardType: TextInputType.emailAddress,
-                        );
-                      },
-                    ),*/
                     const SizedBox(height: 48),
                     Theme(
                       data: ThemeData(
@@ -241,19 +216,20 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                         ),
                       ),
                       child: ValueListenableBuilder<ButtonState>(
-                          valueListenable: _buttonNotifier,
-                          builder: (_, state, __) {
-                            return ElevatedButton(
-                              onPressed: (state == ButtonState.enable)
-                                  ? () {
-                                      print(_namePetController.text);
+                        valueListenable: _buttonNotifier,
+                        builder: (_, state, __) {
+                          return ElevatedButton(
+                            onPressed: (state == ButtonState.enable)
+                                ? () {
+                                    print(_namePetController.text);
 
-                                      print(_birthdayPetController.text);
-                                    }
-                                  : null,
-                              child: Text('Отправить'),
-                            );
-                          }),
+                                    print(_birthdayPetController.text);
+                                  }
+                                : null,
+                            child: Text('Отправить'),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

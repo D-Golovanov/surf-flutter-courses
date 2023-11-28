@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
 
 class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
@@ -65,7 +66,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         Container(
           height: 56,
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
         ),
@@ -75,13 +76,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           onTap: widget.onTap,
           // autovalidateMode: AutovalidateMode.onUserInteraction,
           // validator: widget.validator,
-          cursorColor: const Color(0xFF414657),
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: errorText == null
-                ? const Color(0xFF414657)
-                : const Color(0xFFFD4C56),
+            color: errorText == null ? null : AppColors.red,
           ),
           keyboardType: widget.keyboardType,
           textCapitalization: widget.textCapitalization,
@@ -89,24 +85,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
             errorText: errorText,
-            border: InputBorder.none,
             label: Text(widget.label),
-            contentPadding: const EdgeInsets.only(
-              left: 16,
-              top: 12,
-              right: 16,
-              bottom: 8,
-            ),
-            labelStyle: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFFAFB2BC),
-            ),
-            errorStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFFFD4C56),
-            ),
           ),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/view/info_pet_screen.dart';
 
 void main() {
@@ -10,9 +11,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: InfoPetScreen(),
+      theme: AppTheme.ligthTheme,
+      home: const InfoPetScreen(),
     );
   }
 }

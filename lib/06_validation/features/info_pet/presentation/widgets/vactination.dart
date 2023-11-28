@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
+import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/text_field_on_changed_with_validator.dart';
+import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/custom_text_form_field.dart';
 
 class Vactination extends StatefulWidget {
   const Vactination({super.key});
@@ -20,10 +23,10 @@ class _VactinationState extends State<Vactination> {
             fontSize: 24,
             fontWeight: FontWeight.w600,
             height: 1.33,
-            color: Color(0xFF414657),
+            color: AppColors.textDark,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 24),
         VactinationCheckBox(
           model: VactinationCheckBoxModel(title: 'бешенства'),
         ),
@@ -49,44 +52,59 @@ class VactinationCheckBox extends StatefulWidget {
 class _VactinationCheckBoxState extends State<VactinationCheckBox> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        widget.model.isSelect = !widget.model.isSelect;
-        setState(() {});
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              height: 24,
-              width: 24,
-              decoration: BoxDecoration(
-                color: widget.model.isSelect
-                    ? const Color(0xFFFF8087)
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(6),
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            widget.model.isSelect = !widget.model.isSelect;
+            setState(() {});
+          },
+          child: Row(
+            children: [
+              Container(
+                height: 24,
+                width: 24,
+                decoration: BoxDecoration(
+                  color:
+                      widget.model.isSelect ? AppColors.red : AppColors.white,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: widget.model.isSelect
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 16,
+                        color: Colors.white,
+                      )
+                    : const SizedBox.shrink(),
               ),
-              child: widget.model.isSelect
-                  ? const Icon(
-                      Icons.check_rounded,
-                      size: 16,
-                      color: Colors.white,
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              widget.model.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF414657),
+              const SizedBox(width: 8),
+              Text(
+                widget.model.title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textDark,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+        const SizedBox(height: 16),
+        if (widget.model.isSelect)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: CustomTextFormField(
+              controller: TextEditingController(),
+              validator: Validator.date,
+              // onTap: () => _selectDate(
+              //   context: context,
+              //   controller: _birthdayPetController,
+              // ),
+              label: 'Дата последней прививки',
+              readOnly: true,
+            ),
+          ),
+      ],
     );
   }
 }
@@ -94,6 +112,7 @@ class _VactinationCheckBoxState extends State<VactinationCheckBox> {
 class VactinationCheckBoxModel {
   final String title;
   bool isSelect = false;
+  String date = '';
 
   VactinationCheckBoxModel({required this.title});
 }

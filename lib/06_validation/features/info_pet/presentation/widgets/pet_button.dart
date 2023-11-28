@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/pet_type.dart';
 
 class PetButton extends StatelessWidget {
@@ -22,12 +23,12 @@ class PetButton extends StatelessWidget {
           width: 72,
           height: 72,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFFFF8087) : Colors.white,
+            color: isActive ? AppColors.red : AppColors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           child: SvgPicture.asset(
             pet.path,
-            color: isActive ? Colors.white : const Color(0xFF414657),
+            color: isActive ? AppColors.white : AppColors.textDark,
           ),
         ),
         const SizedBox(height: 8),
@@ -37,7 +38,7 @@ class PetButton extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w400,
             height: 1.33,
-            color: Color(0xFF414657),
+            color: AppColors.textDark,
           ),
         )
       ],

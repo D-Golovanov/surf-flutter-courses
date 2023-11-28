@@ -112,7 +112,6 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAECEB),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16)
@@ -194,42 +193,20 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                       },
                     ),
                     const SizedBox(height: 48),
-                    Theme(
-                      data: ThemeData(
-                        elevatedButtonTheme: ElevatedButtonThemeData(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFFF8087),
-                            foregroundColor: Color(0xFFFFFFFF),
-                            disabledBackgroundColor: Color(0xFFD3D5D8),
-                            disabledForegroundColor: Color(0xFFFFFFFF),
-                            minimumSize: const Size.fromHeight(48.0),
-                            elevation: 16.0,
-                            shadowColor: Color(0xFFFF8087).withOpacity(.24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            textStyle: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      child: ValueListenableBuilder<ButtonState>(
-                        valueListenable: _buttonNotifier,
-                        builder: (_, state, __) {
-                          return ElevatedButton(
-                            onPressed: (state == ButtonState.enable)
-                                ? () {
-                                    print(_namePetController.text);
+                    ValueListenableBuilder<ButtonState>(
+                      valueListenable: _buttonNotifier,
+                      builder: (_, state, __) {
+                        return ElevatedButton(
+                          onPressed: (state == ButtonState.enable)
+                              ? () {
+                                  print(_namePetController.text);
 
-                                    print(_birthdayPetController.text);
-                                  }
-                                : null,
-                            child: Text('Отправить'),
-                          );
-                        },
-                      ),
+                                  print(_birthdayPetController.text);
+                                }
+                              : null,
+                          child: const Text('Отправить'),
+                        );
+                      },
                     ),
                   ],
                 ),

@@ -11,6 +11,7 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextCapitalization textCapitalization;
   final bool readOnly;
+  final bool vlaidationOnChange;
 
   const CustomTextFormField({
     super.key,
@@ -22,6 +23,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onTap,
     this.textCapitalization = TextCapitalization.none,
     this.readOnly = false,
+    this.vlaidationOnChange = false,
   });
 
   @override
@@ -33,29 +35,36 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   String? errorText;
 
-  void unFocus() {
+  void _validationInput() {
+    errorText = widget.validator!(widget.controller.text);
+    setState(() {});
+  }
+
+  void _unFocus() {
     widget.controller.text = widget.controller.text.trim();
     if (!_focusNode.hasFocus) {
       if (widget.validator != null) {
         errorText = widget.validator!(widget.controller.text);
         setState(() {});
-        print(widget.controller.text);
-        // _focusNode.nextFocus();
       }
     }
   }
 
   @override
   void initState() {
-    _focusNode.addListener(unFocus);
+    if (widget.vlaidationOnChange) {
+      widget.controller.addListener(_validationInput);
+    }
+    _focusNode.addListener(_unFocus);
     super.initState();
   }
 
   @override
   void dispose() {
-    _focusNode
-      ..removeListener(unFocus)
-      ..dispose();
+    _focusNode.dispose();
+    if (widget.vlaidationOnChange) {
+      widget.controller.removeListener(_validationInput);
+    }
     super.dispose();
   }
 
@@ -74,8 +83,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           focusNode: _focusNode,
           controller: widget.controller,
           onTap: widget.onTap,
-          // autovalidateMode: AutovalidateMode.onUserInteraction,
-          // validator: widget.validator,
           style: TextStyle(
             color: errorText == null ? null : AppColors.red,
           ),

@@ -6,8 +6,10 @@ import 'package:surf_flutter_courses_template/06_validation/features/info_pet/pr
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/widgets.dart';
 
 class VactinationFormWidget extends StatefulWidget {
-  final VactinationFormModel vactinationFormModel;
-  const VactinationFormWidget({super.key, required this.vactinationFormModel});
+  //final VactinationFormModel vactinationFormModel;
+  const VactinationFormWidget({
+    super.key, //required this.vactinationFormModel
+  });
 
   @override
   State<VactinationFormWidget> createState() => _VactinationFormWidgetState();
@@ -20,13 +22,14 @@ class _VactinationFormWidgetState extends State<VactinationFormWidget> {
 
   @override
   void initState() {
+    /*
     _rabiesController.addListener(() =>
         widget.vactinationFormModel.setRabiesDate(_rabiesController.text));
     _covidController.addListener(
         () => widget.vactinationFormModel.setRabiesDate(_covidController.text));
     _malariaController.addListener(() =>
         widget.vactinationFormModel.setRabiesDate(_malariaController.text));
-
+*/
     super.initState();
   }
 
@@ -117,17 +120,18 @@ class VactinationCheckBox extends StatelessWidget {
             if (model.isSelect)
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
-                child: CustomTextFormField(
-                  controller: controller,
-                  validator: Validator.date,
-                  vlaidationOnChange: true,
-                  onTap: () => datePicker(
-                    context: context,
-                    controller: controller,
-                  ),
-                  label: 'Дата последней прививки',
-                  readOnly: true,
-                ),
+                child: const SizedBox(height: 16.0),
+                // CustomTextFormField(
+                //   // controller: controller,
+                //   validator: Validator.date,
+                //   vlaidationOnChange: true,
+                //   onTap: () => datePicker(
+                //     context: context,
+                //     controller: controller,
+                //   ),
+                //   label: 'Дата последней прививки',
+                //   readOnly: true,
+                // ),
               ),
           ],
         );

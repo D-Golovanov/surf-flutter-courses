@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
+import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
 
 class CustomTextFormField extends StatefulWidget {
-  final TextEditingController controller;
   final String label;
+  final InputModel modelValue;
   final String? Function(String?)? validator;
   final GestureTapCallback? onTap;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final TextCapitalization textCapitalization;
   final bool readOnly;
+  final bool vlaidationOnChange;
 
   const CustomTextFormField({
     super.key,
-    required this.controller,
     required this.label,
+    required this.modelValue,
     this.keyboardType,
     this.validator,
     this.inputFormatters,
     this.onTap,
     this.textCapitalization = TextCapitalization.none,
     this.readOnly = false,
+    this.vlaidationOnChange = false,
   });
 
   @override
@@ -30,32 +34,43 @@ class CustomTextFormField extends StatefulWidget {
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   final _focusNode = FocusNode();
+  late InfoPetScreenModel model;
 
-  String? errorText;
+  void _validationInput() {
+    widget.modelValue.error = widget.validator!(widget.modelValue.value.text);
+    setState(() {});
+  }
 
-  void unFocus() {
-    widget.controller.text = widget.controller.text.trim();
+  void _unFocusInput() {
+    widget.modelValue.value.text = widget.modelValue.value.text.trim();
+
     if (!_focusNode.hasFocus) {
       if (widget.validator != null) {
-        errorText = widget.validator!(widget.controller.text);
+        widget.modelValue.error =
+            widget.validator!(widget.modelValue.value.text);
         setState(() {});
-        print(widget.controller.text);
-        // _focusNode.nextFocus();
       }
+      model.validationForm();
     }
   }
 
   @override
   void initState() {
-    _focusNode.addListener(unFocus);
+    model = context.read<InfoPetScreenModel>();
+    if (widget.vlaidationOnChange) {
+      widget.modelValue.value.addListener(_validationInput);
+    }
+    _focusNode.addListener(_unFocusInput);
     super.initState();
   }
 
   @override
   void dispose() {
-    _focusNode
-      ..removeListener(unFocus)
-      ..dispose();
+    _focusNode.dispose();
+    if (widget.vlaidationOnChange) {
+      widget.modelValue.value.removeListener(_validationInput);
+    }
+    widget.modelValue.value.dispose();
     super.dispose();
   }
 
@@ -72,19 +87,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ),
         TextFormField(
           focusNode: _focusNode,
-          controller: widget.controller,
+          controller: widget.modelValue.value,
           onTap: widget.onTap,
-          // autovalidateMode: AutovalidateMode.onUserInteraction,
-          // validator: widget.validator,
           style: TextStyle(
-            color: errorText == null ? null : AppColors.red,
+            color: widget.modelValue.error == null ? null : AppColors.red,
           ),
           keyboardType: widget.keyboardType,
           textCapitalization: widget.textCapitalization,
           readOnly: widget.readOnly,
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
-            errorText: errorText,
+            errorText: widget.modelValue.error,
             label: Text(widget.label),
           ),
         ),

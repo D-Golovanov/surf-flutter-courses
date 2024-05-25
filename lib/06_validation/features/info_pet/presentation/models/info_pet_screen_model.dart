@@ -4,56 +4,85 @@ import 'package:surf_flutter_courses_template/06_validation/features/info_pet/pr
 enum ButtonState { enable, disabled, sending }
 
 class InputModel {
-  final TextEditingController value;
+  final TextEditingController controller;
   String? error;
-  InputModel({required this.value, this.error});
+  InputModel({required this.controller, this.error});
+}
+
+class VactinationInputModel extends InputModel {
+  bool selected;
+  VactinationInputModel({
+    required this.selected,
+    required super.controller,
+    super.error,
+  });
 }
 
 class InfoPetScreenModel extends ChangeNotifier {
   TypePet type = TypePet.dog;
 
   InputModel nameInputModel =
-      InputModel(value: TextEditingController(), error: null);
+      InputModel(controller: TextEditingController(), error: null);
   InputModel birthdayInputModel =
-      InputModel(value: TextEditingController(), error: null);
+      InputModel(controller: TextEditingController(), error: null);
   InputModel weigthInputModel =
-      InputModel(value: TextEditingController(), error: null);
+      InputModel(controller: TextEditingController(), error: null);
   InputModel emailInputModel =
-      InputModel(value: TextEditingController(), error: null);
+      InputModel(controller: TextEditingController(), error: null);
 
-  InputModel rabiesInputModel =
-      InputModel(value: TextEditingController(), error: null);
-  InputModel covidInputModel =
-      InputModel(value: TextEditingController(), error: null);
-  InputModel malariaInputModel =
-      InputModel(value: TextEditingController(), error: null);
+  VactinationInputModel rabiesInputModel = VactinationInputModel(
+    controller: TextEditingController(),
+    error: null,
+    selected: false,
+  );
+  VactinationInputModel covidInputModel = VactinationInputModel(
+    controller: TextEditingController(),
+    error: null,
+    selected: false,
+  );
+  VactinationInputModel malariaInputModel = VactinationInputModel(
+    controller: TextEditingController(),
+    error: null,
+    selected: false,
+  );
 
   ButtonState _formState = ButtonState.disabled;
 
   ButtonState get formState => _formState;
 
-  void validationForm() {
-    [
-      nameInputModel,
-      birthdayInputModel,
-      weigthInputModel,
-      emailInputModel,
-      rabiesInputModel,
-      covidInputModel,
-      malariaInputModel
-    ].every((element) => element.error == null && element.value.text.isNotEmpty)
-        ? _formState = ButtonState.enable
-        : _formState = ButtonState.disabled;
+  final List<InputModel> _listInputsForm = [];
 
-    notifyListeners();
+  void addInputForm(InputModel inputModel) => _listInputsForm.add(inputModel);
+  void removeInputForm(InputModel inputModel) {
+    inputModel.controller.text = '';
+    inputModel.error = null;
+    _listInputsForm.remove(inputModel);
+  }
+
+  void validationForm() {
+    print(_listInputsForm.length);
+    if (_listInputsForm.isNotEmpty) {
+      _listInputsForm.every((element) =>
+              element.error == null && element.controller.text.isNotEmpty)
+          ? _formState = ButtonState.enable
+          : _formState = ButtonState.disabled;
+
+      notifyListeners();
+    }
   }
 
   void setType(TypePet newType) {
     type = newType;
+    validationForm();
+    notifyListeners();
+  }
+
+  void change(VactinationInputModel vactinationInputModel) {
+    vactinationInputModel.selected = !vactinationInputModel.selected;
+    validationForm();
     notifyListeners();
   }
 
   @override
-  String toString() =>
-      '$type - ${nameInputModel.value.text} ${nameInputModel.error}';
+  String toString() => '$type - ${nameInputModel.controller.text}';
 }

@@ -22,7 +22,6 @@ class MainApp extends StatelessWidget {
       ],
       supportedLocales: const [
         Locale('ru', 'RU'),
-        Locale('en', 'EN'),
       ],
       theme: AppTheme.ligthTheme,
       home: MultiProvider(

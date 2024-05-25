@@ -34,31 +34,35 @@ class CustomTextFormField extends StatefulWidget {
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   final _focusNode = FocusNode();
-  late InfoPetScreenModel model;
+  late InfoPetScreenModel formModel;
 
   void _validationInput() {
-    widget.modelValue.error = widget.validator!(widget.modelValue.value.text);
+    widget.modelValue.error =
+        widget.validator!(widget.modelValue.controller.text);
     setState(() {});
   }
 
   void _unFocusInput() {
-    widget.modelValue.value.text = widget.modelValue.value.text.trim();
+    widget.modelValue.controller.text =
+        widget.modelValue.controller.text.trim();
 
     if (!_focusNode.hasFocus) {
       if (widget.validator != null) {
         widget.modelValue.error =
-            widget.validator!(widget.modelValue.value.text);
+            widget.validator!(widget.modelValue.controller.text);
         setState(() {});
       }
-      model.validationForm();
+      formModel.validationForm();
     }
   }
 
   @override
   void initState() {
-    model = context.read<InfoPetScreenModel>();
+    formModel = context.read<InfoPetScreenModel>();
+    formModel.addInputForm(widget.modelValue);
+
     if (widget.vlaidationOnChange) {
-      widget.modelValue.value.addListener(_validationInput);
+      widget.modelValue.controller.addListener(_validationInput);
     }
     _focusNode.addListener(_unFocusInput);
     super.initState();
@@ -68,9 +72,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   void dispose() {
     _focusNode.dispose();
     if (widget.vlaidationOnChange) {
-      widget.modelValue.value.removeListener(_validationInput);
+      widget.modelValue.controller.removeListener(_validationInput);
     }
-    widget.modelValue.value.dispose();
+    formModel.removeInputForm(widget.modelValue);
     super.dispose();
   }
 
@@ -87,7 +91,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ),
         TextFormField(
           focusNode: _focusNode,
-          controller: widget.modelValue.value,
+          controller: widget.modelValue.controller,
           onTap: widget.onTap,
           style: TextStyle(
             color: widget.modelValue.error == null ? null : AppColors.red,

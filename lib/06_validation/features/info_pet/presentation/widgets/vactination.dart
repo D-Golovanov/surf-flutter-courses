@@ -1,45 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
-import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/form_model.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/text_field_on_changed_with_validator.dart';
-import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/vactination_model.dart';
+import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/widgets.dart';
 
 class VactinationFormWidget extends StatefulWidget {
-  //final VactinationFormModel vactinationFormModel;
-  const VactinationFormWidget({
-    super.key, //required this.vactinationFormModel
-  });
+  const VactinationFormWidget({super.key});
 
   @override
   State<VactinationFormWidget> createState() => _VactinationFormWidgetState();
 }
 
 class _VactinationFormWidgetState extends State<VactinationFormWidget> {
-  final _rabiesController = TextEditingController();
-  final _covidController = TextEditingController();
-  final _malariaController = TextEditingController();
+  late InfoPetScreenModel formModel;
 
   @override
   void initState() {
-    /*
-    _rabiesController.addListener(() =>
-        widget.vactinationFormModel.setRabiesDate(_rabiesController.text));
-    _covidController.addListener(
-        () => widget.vactinationFormModel.setRabiesDate(_covidController.text));
-    _malariaController.addListener(() =>
-        widget.vactinationFormModel.setRabiesDate(_malariaController.text));
-*/
+    formModel = context.read<InfoPetScreenModel>();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _rabiesController.dispose();
-    _covidController.dispose();
-    _malariaController.dispose();
-
-    super.dispose();
   }
 
   @override
@@ -57,46 +36,49 @@ class _VactinationFormWidgetState extends State<VactinationFormWidget> {
       ),
       const SizedBox(height: 24),
       VactinationCheckBox(
-        model: vactinationWidgetList[0],
-        controller: _rabiesController,
+        title: 'бешенства',
+        inputModel: formModel.rabiesInputModel,
       ),
       VactinationCheckBox(
-        model: vactinationWidgetList[1],
-        controller: _covidController,
+        title: 'ковида',
+        inputModel: formModel.covidInputModel,
       ),
       VactinationCheckBox(
-        model: vactinationWidgetList[2],
-        controller: _malariaController,
+        title: 'малярии',
+        inputModel: formModel.malariaInputModel,
       )
     ]);
   }
 }
 
 class VactinationCheckBox extends StatelessWidget {
-  final VactinationModel model;
-  final TextEditingController controller;
-  const VactinationCheckBox(
-      {super.key, required this.model, required this.controller});
+  final String title;
+  final VactinationInputModel inputModel;
+  const VactinationCheckBox({
+    super.key,
+    required this.title,
+    required this.inputModel,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: model,
-      builder: (context, child) {
+    return Consumer<InfoPetScreenModel>(
+      builder: (_, formModel, __) {
         return Column(
           children: [
             GestureDetector(
-              onTap: model.change,
+              onTap: () => formModel.change(inputModel),
               child: Row(
                 children: [
                   Container(
                     height: 24,
                     width: 24,
                     decoration: BoxDecoration(
-                      color: model.isSelect ? AppColors.red : AppColors.white,
+                      color:
+                          inputModel.selected ? AppColors.red : AppColors.white,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: model.isSelect
+                    child: inputModel.selected
                         ? const Icon(
                             Icons.check_rounded,
                             size: 16,
@@ -106,7 +88,7 @@ class VactinationCheckBox extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    model.title,
+                    title,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -117,21 +99,20 @@ class VactinationCheckBox extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            if (model.isSelect)
+            if (inputModel.selected)
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
-                child: const SizedBox(height: 16.0),
-                // CustomTextFormField(
-                //   // controller: controller,
-                //   validator: Validator.date,
-                //   vlaidationOnChange: true,
-                //   onTap: () => datePicker(
-                //     context: context,
-                //     controller: controller,
-                //   ),
-                //   label: 'Дата последней прививки',
-                //   readOnly: true,
-                // ),
+                child: CustomTextFormField(
+                  modelValue: inputModel,
+                  validator: Validator.date,
+                  vlaidationOnChange: true,
+                  onTap: () => datePicker(
+                    context: context,
+                    controller: inputModel.controller,
+                  ),
+                  label: 'Дата последней прививки',
+                  readOnly: true,
+                ),
               ),
           ],
         );

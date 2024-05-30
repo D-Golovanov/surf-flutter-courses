@@ -9,14 +9,23 @@ class SubmitButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<InfoPetScreenModel>(
       builder: (_, model, __) {
-        return ElevatedButton(
-          onPressed: (model.formState == ButtonState.enable)
-              ? () {
-                  print('$model');
-                }
-              : null,
-          child: const Text('Отправить'),
-        );
+        return switch (model.buttonState) {
+          ButtonState.disabled => const ElevatedButton(
+              onPressed: null,
+              child: Text('Отправить'),
+            ),
+          ButtonState.enable => ElevatedButton(
+              onPressed: model.submitForm,
+              child: const Text('Отправить'),
+            ),
+          ButtonState.sending => const ElevatedButton(
+              onPressed: null,
+              child: SizedBox.square(
+                dimension: 24.0,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        };
       },
     );
   }

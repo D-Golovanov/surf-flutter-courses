@@ -40,9 +40,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     widget.modelValue.error =
         widget.validator!(widget.modelValue.controller.text);
     setState(() {});
+    formModel.validationForm();
   }
 
   void _unFocusInput() {
+    print('32');
     widget.modelValue.controller.text =
         widget.modelValue.controller.text.trim();
 
@@ -64,13 +66,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     if (widget.vlaidationOnChange) {
       widget.modelValue.controller.addListener(_validationInput);
     }
-    _focusNode.addListener(_unFocusInput);
+    if (!widget.readOnly) {
+      _focusNode.addListener(_unFocusInput);
+    }
     super.initState();
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    if (!widget.readOnly) {
+      _focusNode.dispose();
+    }
     if (widget.vlaidationOnChange) {
       widget.modelValue.controller.removeListener(_validationInput);
     }
@@ -90,6 +96,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           ),
         ),
         TextFormField(
+          //enabled: formModel.buttonState == ButtonState.sending ? false : true,
           focusNode: _focusNode,
           controller: widget.modelValue.controller,
           onTap: widget.onTap,

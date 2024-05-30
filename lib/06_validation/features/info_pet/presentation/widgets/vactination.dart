@@ -67,7 +67,12 @@ class VactinationCheckBox extends StatelessWidget {
         return Column(
           children: [
             GestureDetector(
-              onTap: () => formModel.change(inputModel),
+              onTap: () {
+                formModel.change(inputModel);
+                inputModel.selected
+                    ? formModel.setButtonState(ButtonState.disabled)
+                    : formModel.setButtonState(ButtonState.enable);
+              },
               child: Row(
                 children: [
                   Container(

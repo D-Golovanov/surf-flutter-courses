@@ -46,9 +46,13 @@ class InfoPetScreenModel extends ChangeNotifier {
     selected: false,
   );
 
-  ButtonState _formState = ButtonState.disabled;
+  ButtonState _buttonState = ButtonState.disabled;
 
-  ButtonState get formState => _formState;
+  ButtonState get buttonState => _buttonState;
+  void setButtonState(ButtonState buttonState) {
+    _buttonState = buttonState;
+    notifyListeners();
+  }
 
   final List<InputModel> _listInputsForm = [];
 
@@ -64,8 +68,8 @@ class InfoPetScreenModel extends ChangeNotifier {
     if (_listInputsForm.isNotEmpty) {
       _listInputsForm.every((element) =>
               element.error == null && element.controller.text.isNotEmpty)
-          ? _formState = ButtonState.enable
-          : _formState = ButtonState.disabled;
+          ? _buttonState = ButtonState.enable
+          : _buttonState = ButtonState.disabled;
 
       notifyListeners();
     }
@@ -81,6 +85,21 @@ class InfoPetScreenModel extends ChangeNotifier {
     vactinationInputModel.selected = !vactinationInputModel.selected;
     validationForm();
     notifyListeners();
+  }
+
+  Future<void> submitForm() async {
+    _buttonState = ButtonState.sending;
+    notifyListeners();
+    await Future.delayed(const Duration(milliseconds: 2000));
+    _buttonState = ButtonState.enable;
+    // cleanForm();
+    notifyListeners();
+  }
+
+  void cleanForm() {
+    nameInputModel.controller.text = '';
+    nameInputModel.error = null;
+    validationForm();
   }
 
   @override

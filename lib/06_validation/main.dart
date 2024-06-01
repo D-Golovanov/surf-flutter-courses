@@ -27,7 +27,7 @@ class MainApp extends StatelessWidget {
       home: MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (_) => InfoPetScreenModel(),
+            create: (_) => FormModel(),
           ),
         ],
         child: const InfoPetScreen(),

@@ -3,36 +3,34 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
+import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/widgets.dart';
 
-class CustomTextFormField extends StatefulWidget {
+class CustomTextFormFieldDate extends StatefulWidget {
   final String label;
   final Input modelValue;
   final String? Function(String?)? validator;
-  final bool? datePicker;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final TextCapitalization textCapitalization;
   final bool readOnly;
-  final bool vlaidationOnChange;
 
-  const CustomTextFormField({
+  const CustomTextFormFieldDate({
     super.key,
     required this.label,
     required this.modelValue,
     this.keyboardType,
     this.validator,
     this.inputFormatters,
-    this.datePicker,
     this.textCapitalization = TextCapitalization.none,
     this.readOnly = false,
-    this.vlaidationOnChange = false,
   });
 
   @override
-  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
+  State<CustomTextFormFieldDate> createState() =>
+      _CustomTextFormFieldDateState();
 }
 
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
+class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
   String? errorText;
@@ -42,45 +40,39 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   void initState() {
     fm = context.read<FormModel>();
-    _focusNode.addListener(_unFocusInput);
+    _controller.addListener(_onChange);
     widget.modelValue.active = true;
     super.initState();
   }
 
   @override
   void dispose() {
-    _focusNode
-      ..removeListener(_unFocusInput)
+    _controller
+      ..removeListener(_onChange)
       ..dispose();
-    _controller.dispose();
     widget.modelValue.active = false;
     widget.modelValue.value = '';
     widget.modelValue.isError = false;
     super.dispose();
   }
 
-  void _unFocusInput() {
-    if (_focusNode.hasFocus) {
-      widget.modelValue.hasFocus = true;
-    }
-    if (!_focusNode.hasFocus && widget.modelValue.hasFocus) {
-      String tmpValue = _controller.text.trim();
-      final validValue = widget.validator!(tmpValue);
+  void _onChange() {
+    String tmpValue = _controller.text.trim();
+    final validValue = widget.validator!(tmpValue);
 
-      if (validValue != null) {
-        widget.modelValue.isError = true;
-        errorText = validValue;
-      } else {
-        widget.modelValue.value = tmpValue;
-        widget.modelValue.isError = false;
-        errorText = null;
-      }
-
-      _controller.text = tmpValue;
-      fm.validationForm();
-      widget.modelValue.hasFocus = false;
-      setState(() {});
+    if (validValue != null) {
+      widget.modelValue.isError = true;
+      errorText = validValue;
+    } else {
+      widget.modelValue.value = tmpValue;
+      widget.modelValue.isError = false;
+      errorText = null;
     }
+
+    _controller.text = tmpValue;
+    fm.validationForm();
+    widget.modelValue.hasFocus = false;
+    setState(() {});
   }
 
   @override
@@ -101,8 +93,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 enabled: state == ButtonState.sending ? false : true,
                 focusNode: _focusNode,
                 controller: _controller,
-                onChanged: (value) {
-                  widget.modelValue.value = value;
+                onTap: () async {
+                  datePicker(context: context, controller: _controller);
                 },
                 style: TextStyle(
                   color: widget.modelValue.isError ? AppColors.red : null,

@@ -5,24 +5,13 @@ import 'package:surf_flutter_courses_template/06_validation/features/info_pet/da
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/widgets.dart';
 
-class VactinationFormWidget extends StatefulWidget {
+class VactinationFormWidget extends StatelessWidget {
   const VactinationFormWidget({super.key});
 
   @override
-  State<VactinationFormWidget> createState() => _VactinationFormWidgetState();
-}
-
-class _VactinationFormWidgetState extends State<VactinationFormWidget> {
-  late InfoPetScreenModel formModel;
-
-  @override
-  void initState() {
-    formModel = context.read<InfoPetScreenModel>();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final fm = context.read<FormModel>();
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: 24),
       const Text(
@@ -37,23 +26,23 @@ class _VactinationFormWidgetState extends State<VactinationFormWidget> {
       const SizedBox(height: 24),
       VactinationCheckBox(
         title: 'бешенства',
-        inputModel: formModel.rabiesInputModel,
+        inputModel: fm.rabies,
       ),
       VactinationCheckBox(
         title: 'ковида',
-        inputModel: formModel.covidInputModel,
+        inputModel: fm.covid,
       ),
       VactinationCheckBox(
         title: 'малярии',
-        inputModel: formModel.malariaInputModel,
+        inputModel: fm.malaria,
       )
     ]);
   }
 }
 
-class VactinationCheckBox extends StatelessWidget {
+class VactinationCheckBox extends StatefulWidget {
   final String title;
-  final VactinationInputModel inputModel;
+  final Input inputModel;
   const VactinationCheckBox({
     super.key,
     required this.title,
@@ -61,67 +50,80 @@ class VactinationCheckBox extends StatelessWidget {
   });
 
   @override
+  State<VactinationCheckBox> createState() => _VactinationCheckBoxState();
+}
+
+class _VactinationCheckBoxState extends State<VactinationCheckBox> {
+  bool _isSelect = false;
+  late FormModel fm;
+
+  @override
+  void initState() {
+    fm = context.read<FormModel>();
+    super.initState();
+  }
+
+  void _change() {
+    _isSelect = !_isSelect;
+    widget.inputModel.active = _isSelect;
+    fm.validationForm();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<InfoPetScreenModel>(
-      builder: (_, formModel, __) {
-        return Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                formModel.change(inputModel);
-                inputModel.selected
-                    ? formModel.setButtonState(ButtonState.disabled)
-                    : formModel.setButtonState(ButtonState.enable);
-              },
-              child: Row(
-                children: [
-                  Container(
-                    height: 24,
-                    width: 24,
-                    decoration: BoxDecoration(
-                      color:
-                          inputModel.selected ? AppColors.red : AppColors.white,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: inputModel.selected
-                        ? const Icon(
-                            Icons.check_rounded,
-                            size: 16,
-                            color: Colors.white,
-                          )
-                        : const SizedBox.shrink(),
+    return Column(
+      children: [
+        ValueListenableBuilder<ButtonState>(
+            valueListenable: fm.buttonState,
+            builder: (_, state, __) {
+              return GestureDetector(
+                onTap: state == ButtonState.sending ? null : _change,
+                child: Opacity(
+                  opacity: state == ButtonState.sending ? .5 : 1,
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 24,
+                        width: 24,
+                        decoration: BoxDecoration(
+                          color: _isSelect ? AppColors.red : AppColors.white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: _isSelect
+                            ? const Icon(
+                                Icons.check_rounded,
+                                size: 16,
+                                color: Colors.white,
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        widget.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (inputModel.selected)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: CustomTextFormField(
-                  modelValue: inputModel,
-                  validator: Validator.date,
-                  vlaidationOnChange: true,
-                  onTap: () => datePicker(
-                    context: context,
-                    controller: inputModel.controller,
-                  ),
-                  label: 'Дата последней прививки',
-                  readOnly: true,
                 ),
-              ),
-          ],
-        );
-      },
+              );
+            }),
+        const SizedBox(height: 16),
+        if (_isSelect)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: CustomTextFormFieldDate(
+              modelValue: widget.inputModel,
+              validator: Validator.date,
+              label: 'Дата последней прививки',
+              readOnly: true,
+            ),
+          ),
+      ],
     );
   }
 }

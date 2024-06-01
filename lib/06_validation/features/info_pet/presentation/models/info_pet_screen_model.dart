@@ -3,105 +3,46 @@ import 'package:surf_flutter_courses_template/06_validation/features/info_pet/pr
 
 enum ButtonState { enable, disabled, sending }
 
-class InputModel {
-  final TextEditingController controller;
-  String? error;
-  InputModel({required this.controller, this.error});
-}
+class Input {
+  bool active;
+  String value;
+  bool isError;
+  bool hasFocus;
 
-class VactinationInputModel extends InputModel {
-  bool selected;
-  VactinationInputModel({
-    required this.selected,
-    required super.controller,
-    super.error,
-  });
-}
-
-class InfoPetScreenModel extends ChangeNotifier {
-  TypePet type = TypePet.dog;
-
-  InputModel nameInputModel =
-      InputModel(controller: TextEditingController(), error: null);
-  InputModel birthdayInputModel =
-      InputModel(controller: TextEditingController(), error: null);
-  InputModel weigthInputModel =
-      InputModel(controller: TextEditingController(), error: null);
-  InputModel emailInputModel =
-      InputModel(controller: TextEditingController(), error: null);
-
-  VactinationInputModel rabiesInputModel = VactinationInputModel(
-    controller: TextEditingController(),
-    error: null,
-    selected: false,
-  );
-  VactinationInputModel covidInputModel = VactinationInputModel(
-    controller: TextEditingController(),
-    error: null,
-    selected: false,
-  );
-  VactinationInputModel malariaInputModel = VactinationInputModel(
-    controller: TextEditingController(),
-    error: null,
-    selected: false,
-  );
-
-  ButtonState _buttonState = ButtonState.disabled;
-
-  ButtonState get buttonState => _buttonState;
-  void setButtonState(ButtonState buttonState) {
-    _buttonState = buttonState;
-    notifyListeners();
-  }
-
-  final List<InputModel> _listInputsForm = [];
-
-  void addInputForm(InputModel inputModel) => _listInputsForm.add(inputModel);
-  void removeInputForm(InputModel inputModel) {
-    inputModel.controller.text = '';
-    inputModel.error = null;
-    _listInputsForm.remove(inputModel);
-  }
-
-  void validationForm() {
-    print(_listInputsForm.length);
-    if (_listInputsForm.isNotEmpty) {
-      _listInputsForm.every((element) =>
-              element.error == null && element.controller.text.isNotEmpty)
-          ? _buttonState = ButtonState.enable
-          : _buttonState = ButtonState.disabled;
-
-      notifyListeners();
-    }
-  }
-
-  void setType(TypePet newType) {
-    type = newType;
-    validationForm();
-    notifyListeners();
-  }
-
-  void change(VactinationInputModel vactinationInputModel) {
-    vactinationInputModel.selected = !vactinationInputModel.selected;
-    validationForm();
-    notifyListeners();
-  }
-
-  Future<void> submitForm() async {
-    _buttonState = ButtonState.sending;
-    notifyListeners();
-    await Future.delayed(const Duration(milliseconds: 2000));
-    _buttonState = ButtonState.enable;
-    // cleanForm();
-    notifyListeners();
-  }
-
-  void cleanForm() {
-    nameInputModel.controller.text = '';
-    nameInputModel.error = null;
-    validationForm();
-  }
+  Input(
+      {this.active = false,
+      this.value = '',
+      this.isError = false,
+      this.hasFocus = false});
 
   @override
-  String toString() => '$type - ${nameInputModel.controller.text}';
+  String toString() => '$active - $value - $isError';
+}
+
+class FormModel extends ChangeNotifier {
+  final typePet = ValueNotifier<TypePet>(TypePet.dog);
+  final buttonState = ValueNotifier<ButtonState>(ButtonState.disabled);
+
+  Input name = Input();
+  Input weigth = Input();
+  Input email = Input();
+  Input birthday = Input();
+
+  Input rabies = Input();
+  Input covid = Input();
+  Input malaria = Input();
+
+  void validationForm() {
+    [name, weigth, email, birthday, rabies, covid, malaria]
+            .where((element) => element.active)
+            .every((el) => !el.isError && el.value.isNotEmpty)
+        ? buttonState.value = ButtonState.enable
+        : buttonState.value = ButtonState.disabled;
+  }
+
+  void submit() async {
+    buttonState.value = ButtonState.sending;
+    await Future.delayed(const Duration(milliseconds: 2000));
+    buttonState.value = ButtonState.disabled;
+  }
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/input_formattrs.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/text_field_on_changed_with_validator.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
+import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/pet_type.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/widgets/widgets.dart';
 
 class InfoPetScreen extends StatefulWidget {
@@ -14,10 +15,16 @@ class InfoPetScreen extends StatefulWidget {
 }
 
 class _InfoPetScreenState extends State<InfoPetScreen> {
+  late FormModel fm;
+
+  @override
+  void initState() {
+    fm = context.read<FormModel>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    InfoPetScreenModel formModel = context.watch<InfoPetScreenModel>();
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -33,7 +40,7 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                     CustomTextFormField(
                       validator: Validator.name,
                       label: 'Имя питомца',
-                      modelValue: formModel.nameInputModel,
+                      modelValue: fm.name,
                       keyboardType: TextInputType.text,
                       textCapitalization: TextCapitalization.sentences,
                       inputFormatters: [
@@ -41,20 +48,15 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    CustomTextFormField(
-                      modelValue: formModel.birthdayInputModel,
+                    CustomTextFormFieldDate(
+                      modelValue: fm.birthday,
                       validator: Validator.date,
-                      vlaidationOnChange: true,
-                      onTap: () => datePicker(
-                        context: context,
-                        controller: formModel.birthdayInputModel.controller,
-                      ),
                       label: 'День рождения питомца',
                       readOnly: true,
                     ),
                     const SizedBox(height: 16),
                     CustomTextFormField(
-                      modelValue: formModel.weigthInputModel,
+                      modelValue: fm.weigth,
                       validator: Validator.weigth,
                       label: 'Вес, кг',
                       keyboardType:
@@ -67,14 +69,15 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                     ),
                     const SizedBox(height: 16),
                     CustomTextFormField(
-                      modelValue: formModel.emailInputModel,
+                      modelValue: fm.email,
                       validator: Validator.email,
                       label: 'Почта хозяина',
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    Consumer<InfoPetScreenModel>(
-                      builder: (_, model, __) {
-                        return model.type.vactination
+                    ValueListenableBuilder<TypePet>(
+                      valueListenable: fm.typePet,
+                      builder: (_, state, __) {
+                        return state.vactination
                             ? const VactinationFormWidget()
                             : const SizedBox.shrink();
                       },

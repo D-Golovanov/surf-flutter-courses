@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<String> datePicker(
+Future<String?> datePicker(
     {required BuildContext context,
     required TextEditingController controller}) async {
   DateTime currentDate = DateTime.now();

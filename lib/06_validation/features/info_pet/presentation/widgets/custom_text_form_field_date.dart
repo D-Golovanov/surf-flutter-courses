@@ -35,27 +35,54 @@ class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
   final _controller = TextEditingController();
   String? errorText;
 
+  bool _firstTapFocus = false;
+
   late FormModel fm;
 
   @override
   void initState() {
     fm = context.read<FormModel>();
-    _controller.addListener(_onChange);
+    // _controller.addListener(_onChange);
+    _focusNode.addListener(_onFocus);
     widget.modelValue.active = true;
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller
-      ..removeListener(_onChange)
+    _focusNode
+      ..removeListener(_onFocus)
       ..dispose();
+    _controller.dispose();
     widget.modelValue.active = false;
     widget.modelValue.value = '';
     widget.modelValue.isError = false;
     super.dispose();
   }
 
+  void _onFocus() {
+    if (_focusNode.hasFocus && _firstTapFocus) {
+      String tmpValue = _controller.text.trim();
+      final validValue = widget.validator!(tmpValue);
+
+      if (validValue != null) {
+        widget.modelValue.isError = true;
+        errorText = validValue;
+      } else {
+        widget.modelValue.value = tmpValue;
+        widget.modelValue.isError = false;
+        errorText = null;
+      }
+
+      _controller.text = tmpValue;
+      fm.validationForm();
+      widget.modelValue.hasFocus = false;
+      setState(() {});
+    }
+    _firstTapFocus = true;
+  }
+
+/*
   void _onChange() {
     String tmpValue = _controller.text.trim();
     final validValue = widget.validator!(tmpValue);
@@ -74,7 +101,7 @@ class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
     widget.modelValue.hasFocus = false;
     setState(() {});
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Stack(

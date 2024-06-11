@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/string_constants.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
 
 class SubmitButtonWidget extends StatelessWidget {
@@ -14,11 +15,11 @@ class SubmitButtonWidget extends StatelessWidget {
       builder: (_, state, __) => switch (state) {
         ButtonState.disabled => const ElevatedButton(
             onPressed: null,
-            child: Text('Отправить'),
+            child: Text(StringConstants.buttonSubmit),
           ),
         ButtonState.enable => ElevatedButton(
             onPressed: fm.submit,
-            child: const Text('Отправить'),
+            child: const Text(StringConstants.buttonSubmit),
           ),
         ButtonState.sending => const ElevatedButton(
             onPressed: null,

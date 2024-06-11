@@ -40,7 +40,7 @@ class PetButton extends StatelessWidget {
             height: 1.33,
             color: AppColors.textDark,
           ),
-        )
+        ),
       ],
     );
   }

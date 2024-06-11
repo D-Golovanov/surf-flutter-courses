@@ -12,35 +12,36 @@ class TypePetRowButtonsWidget extends StatelessWidget {
     FormModel fm = context.read<FormModel>();
 
     return ValueListenableBuilder<ButtonState>(
-        valueListenable: fm.buttonState,
-        builder: (_, buttonState, __) {
-          return ValueListenableBuilder<TypePet>(
-            valueListenable: fm.typePet,
-            builder: (_, state, __) {
-              return Opacity(
-                opacity: buttonState == ButtonState.sending ? .5 : 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ...TypePet.values.map(
-                      (petItem) => GestureDetector(
-                        onTap: buttonState == ButtonState.sending
-                            ? null
-                            : () {
-                                fm.typePet.value = petItem;
-                                fm.validationForm();
-                              },
-                        child: PetButton(
-                          pet: petItem,
-                          isActive: state == petItem,
-                        ),
+      valueListenable: fm.buttonState,
+      builder: (_, buttonState, __) {
+        return ValueListenableBuilder<TypePet>(
+          valueListenable: fm.typePet,
+          builder: (_, state, __) {
+            return Opacity(
+              opacity: buttonState == ButtonState.sending ? .5 : 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ...TypePet.values.map(
+                    (petItem) => GestureDetector(
+                      onTap: buttonState == ButtonState.sending
+                          ? null
+                          : () {
+                              fm.typePet.value = petItem;
+                              fm.validationForm();
+                            },
+                      child: PetButton(
+                        pet: petItem,
+                        isActive: state == petItem,
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          );
-        });
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

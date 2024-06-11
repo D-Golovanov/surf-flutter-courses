@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/string_constants.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/input_formattrs.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/text_field_on_changed_with_validator.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
@@ -39,7 +40,7 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                     const SizedBox(height: 32),
                     CustomTextFormField(
                       validator: Validator.name,
-                      label: 'Имя питомца',
+                      label: StringConstants.labelName,
                       modelValue: fm.name,
                       keyboardType: TextInputType.text,
                       textCapitalization: TextCapitalization.sentences,
@@ -51,14 +52,14 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                     CustomTextFormFieldDate(
                       modelValue: fm.birthday,
                       validator: Validator.date,
-                      label: 'День рождения питомца',
+                      label: StringConstants.labelBirthday,
                       readOnly: true,
                     ),
                     const SizedBox(height: 16),
                     CustomTextFormField(
                       modelValue: fm.weigth,
                       validator: Validator.weigth,
-                      label: 'Вес, кг',
+                      label: StringConstants.labelWeigth,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
@@ -71,7 +72,7 @@ class _InfoPetScreenState extends State<InfoPetScreen> {
                     CustomTextFormField(
                       modelValue: fm.email,
                       validator: Validator.email,
-                      label: 'Почта хозяина',
+                      label: StringConstants.labelEmail,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     ValueListenableBuilder<TypePet>(

@@ -35,14 +35,11 @@ class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
   final _controller = TextEditingController();
   String? errorText;
 
-  bool _firstTapFocus = false;
-
   late FormModel fm;
 
   @override
   void initState() {
     fm = context.read<FormModel>();
-    // _controller.addListener(_onChange);
     _focusNode.addListener(_onFocus);
     widget.modelValue.active = true;
     super.initState();
@@ -60,29 +57,14 @@ class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
     super.dispose();
   }
 
-  void _onFocus() {
-    if (_focusNode.hasFocus && _firstTapFocus) {
-      String tmpValue = _controller.text.trim();
-      final validValue = widget.validator!(tmpValue);
-
-      if (validValue != null) {
-        widget.modelValue.isError = true;
-        errorText = validValue;
-      } else {
-        widget.modelValue.value = tmpValue;
-        widget.modelValue.isError = false;
-        errorText = null;
-      }
-
-      _controller.text = tmpValue;
-      fm.validationForm();
-      widget.modelValue.hasFocus = false;
-      setState(() {});
+  void _onFocus() async {
+    if (_focusNode.hasFocus) {
+      await datePicker(context: context, controller: _controller);
+      _focusNode.unfocus();
+      _onChange();
     }
-    _firstTapFocus = true;
   }
 
-/*
   void _onChange() {
     String tmpValue = _controller.text.trim();
     final validValue = widget.validator!(tmpValue);
@@ -98,10 +80,9 @@ class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
 
     _controller.text = tmpValue;
     fm.validationForm();
-    widget.modelValue.hasFocus = false;
     setState(() {});
   }
-*/
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -114,28 +95,26 @@ class _CustomTextFormFieldDateState extends State<CustomTextFormFieldDate> {
           ),
         ),
         ValueListenableBuilder<ButtonState>(
-            valueListenable: fm.buttonState,
-            builder: (_, state, __) {
-              return TextFormField(
-                enabled: state == ButtonState.sending ? false : true,
-                focusNode: _focusNode,
-                controller: _controller,
-                onTap: () async {
-                  datePicker(context: context, controller: _controller);
-                },
-                style: TextStyle(
-                  color: widget.modelValue.isError ? AppColors.red : null,
-                ),
-                keyboardType: widget.keyboardType,
-                textCapitalization: widget.textCapitalization,
-                readOnly: widget.readOnly,
-                inputFormatters: widget.inputFormatters,
-                decoration: InputDecoration(
-                  errorText: errorText,
-                  label: Text(widget.label),
-                ),
-              );
-            }),
+          valueListenable: fm.buttonState,
+          builder: (_, state, __) {
+            return TextFormField(
+              enabled: state == ButtonState.sending ? false : true,
+              focusNode: _focusNode,
+              controller: _controller,
+              style: TextStyle(
+                color: widget.modelValue.isError ? AppColors.red : null,
+              ),
+              keyboardType: widget.keyboardType,
+              textCapitalization: widget.textCapitalization,
+              readOnly: widget.readOnly,
+              inputFormatters: widget.inputFormatters,
+              decoration: InputDecoration(
+                errorText: errorText,
+                label: Text(widget.label),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

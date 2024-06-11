@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:surf_flutter_courses_template/06_validation/core/string_constants.dart';
 import 'package:surf_flutter_courses_template/06_validation/core/theme/app_theme.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/data/text_field_on_changed_with_validator.dart';
 import 'package:surf_flutter_courses_template/06_validation/features/info_pet/presentation/models/info_pet_screen_model.dart';
@@ -12,37 +13,41 @@ class VactinationFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final fm = context.read<FormModel>();
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const SizedBox(height: 24),
-      const Text(
-        'Сделаны прививки от:',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          height: 1.33,
-          color: AppColors.textDark,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        const Text(
+          StringConstants.createVactination,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            height: 1.33,
+            color: AppColors.textDark,
+          ),
         ),
-      ),
-      const SizedBox(height: 24),
-      VactinationCheckBox(
-        title: 'бешенства',
-        inputModel: fm.rabies,
-      ),
-      VactinationCheckBox(
-        title: 'ковида',
-        inputModel: fm.covid,
-      ),
-      VactinationCheckBox(
-        title: 'малярии',
-        inputModel: fm.malaria,
-      )
-    ]);
+        const SizedBox(height: 24),
+        VactinationCheckBox(
+          title: StringConstants.labelRabies,
+          inputModel: fm.rabies,
+        ),
+        VactinationCheckBox(
+          title: StringConstants.labelCovid,
+          inputModel: fm.covid,
+        ),
+        VactinationCheckBox(
+          title: StringConstants.labelMalaria,
+          inputModel: fm.malaria,
+        )
+      ],
+    );
   }
 }
 
 class VactinationCheckBox extends StatefulWidget {
   final String title;
   final Input inputModel;
+
   const VactinationCheckBox({
     super.key,
     required this.title,
@@ -119,7 +124,7 @@ class _VactinationCheckBoxState extends State<VactinationCheckBox> {
             child: CustomTextFormFieldDate(
               modelValue: widget.inputModel,
               validator: Validator.date,
-              label: 'Дата последней прививки',
+              label: StringConstants.labelLastDateVactination,
               readOnly: true,
             ),
           ),

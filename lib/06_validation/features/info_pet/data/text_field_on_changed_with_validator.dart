@@ -1,12 +1,14 @@
+import 'package:surf_flutter_courses_template/06_validation/core/string_constants.dart';
+
 abstract class Validator {
   static String? email(String? value) {
     if (value != null) {
       if (value.isEmpty) {
-        return 'Введите email';
+        return StringConstants.emptyEmail;
       }
       if (!RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$')
           .hasMatch(value)) {
-        return 'Email введен некорректно';
+        return StringConstants.incorrectEmail;
       }
     }
     return null;
@@ -15,10 +17,10 @@ abstract class Validator {
   static String? name(String? value) {
     if (value != null) {
       if (value.isEmpty) {
-        return 'Введите имя питомца';
+        return StringConstants.emptyName;
       }
       if (value.length < 3 || value.length >= 20) {
-        return 'Имя от 3 до 20 символов';
+        return StringConstants.incorrectName;
       }
     }
     return null;
@@ -27,12 +29,14 @@ abstract class Validator {
   static String? weigth(String? value) {
     if (value != null) {
       if (value.isEmpty) {
-        return 'Укажите вес, больше 0 кг';
+        return StringConstants.emptyWeigth;
       }
       if (double.tryParse(value) == null || double.tryParse(value) is String) {
-        return 'Ошибка! Вес указан некорректно';
+        return StringConstants.incorrectWeigth;
       } else {
-        if (double.tryParse(value)! <= 0) return 'Укажите вес, больше 0 кг';
+        if (double.tryParse(value)! <= 0) {
+          return StringConstants.incorrectWeigthMoreZero;
+        }
       }
     }
     return null;
@@ -41,7 +45,7 @@ abstract class Validator {
   static String? date(String? value) {
     if (value != null) {
       if (value.isEmpty) {
-        return 'Укажите дату дд/мм/гггг';
+        return StringConstants.emptyDate;
       }
     }
     return null;

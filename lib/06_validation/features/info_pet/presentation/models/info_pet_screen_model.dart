@@ -9,14 +9,12 @@ class Input {
   bool isError;
   bool hasFocus;
 
-  Input(
-      {this.active = false,
-      this.value = '',
-      this.isError = false,
-      this.hasFocus = false});
-
-  @override
-  String toString() => '$active - $value - $isError';
+  Input({
+    this.active = false,
+    this.value = '',
+    this.isError = false,
+    this.hasFocus = false,
+  });
 }
 
 class FormModel extends ChangeNotifier {

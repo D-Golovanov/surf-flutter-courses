@@ -95,28 +95,29 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           ),
         ),
         ValueListenableBuilder<ButtonState>(
-            valueListenable: fm.buttonState,
-            builder: (_, state, __) {
-              return TextFormField(
-                enabled: state == ButtonState.sending ? false : true,
-                focusNode: _focusNode,
-                controller: _controller,
-                onChanged: (value) {
-                  widget.modelValue.value = value;
-                },
-                style: TextStyle(
-                  color: widget.modelValue.isError ? AppColors.red : null,
-                ),
-                keyboardType: widget.keyboardType,
-                textCapitalization: widget.textCapitalization,
-                readOnly: widget.readOnly,
-                inputFormatters: widget.inputFormatters,
-                decoration: InputDecoration(
-                  errorText: errorText,
-                  label: Text(widget.label),
-                ),
-              );
-            }),
+          valueListenable: fm.buttonState,
+          builder: (_, state, __) {
+            return TextFormField(
+              enabled: state == ButtonState.sending ? false : true,
+              focusNode: _focusNode,
+              controller: _controller,
+              onChanged: (value) {
+                widget.modelValue.value = value;
+              },
+              style: TextStyle(
+                color: widget.modelValue.isError ? AppColors.red : null,
+              ),
+              keyboardType: widget.keyboardType,
+              textCapitalization: widget.textCapitalization,
+              readOnly: widget.readOnly,
+              inputFormatters: widget.inputFormatters,
+              decoration: InputDecoration(
+                errorText: errorText,
+                label: Text(widget.label),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
